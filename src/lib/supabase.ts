@@ -40,20 +40,31 @@ export type Cancion = {
 
 // ── Queries ────────────────────────────────────────────────────────
 
-/** Todas las canciones publicadas con artista y categoría */
-export async function getCanciones(): Promise<Cancion[]> {
-  const { data, error } = await supabase
+const PAGE_SIZE = 12;
+
+/** Canciones publicadas con paginación */
+export async function getCanciones(page = 1, catSlug = ""): Promise<{ data: Cancion[]; total: number }> {
+  const from = (page - 1) * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
+
+  let query = supabase
     .from("canciones")
     .select(`
       id, titulo, slug, anio, tono, letra, youtube_url,
       artistas (id, nombre, slug, pais),
       categorias (id, nombre, slug, color)
-    `)
+    `, { count: "exact" })
     .eq("publicada", true)
-    .order("titulo", { ascending: true });
+    .order("titulo", { ascending: true })
+    .range(from, to);
 
+  if (catSlug && catSlug !== "todas") {
+    query = query.eq("categorias.slug", catSlug);
+  }
+
+  const { data, error, count } = await query;
   if (error) throw error;
-  return data as unknown as Cancion[];
+  return { data: data as unknown as Cancion[], total: count ?? 0 };
 }
 
 /** Una canción por su slug */

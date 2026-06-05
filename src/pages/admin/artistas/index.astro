@@ -1,0 +1,38 @@
+---
+import AdminLayout from "../../../components/AdminLayout.astro";
+import { getArtistas } from "../../../lib/supabase-admin";
+
+const token = Astro.locals.token!;
+const artistas = await getArtistas(token);
+const error = Astro.url.searchParams.get("error");
+---
+
+<AdminLayout title="Artistas" active="artistas">
+  <div class="page-header">
+    <h1>Artistas <span style="color:#a89060;font-size:1rem;">({artistas.length})</span></h1>
+    <a href="/admin/artistas/nueva" class="btn">+ Nuevo artista</a>
+  </div>
+
+  {error && <div class="error">{error}</div>}
+
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Slug</th>
+        <th>País</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {artistas.map((a) => (
+        <tr>
+          <td><a class="link" href={`/admin/artistas/${a.id}`}>{a.nombre}</a></td>
+          <td style="color:#a89060;font-size:.85rem;">{a.slug}</td>
+          <td>{a.pais ?? "—"}</td>
+          <td><a class="link" href={`/admin/artistas/${a.id}`}>Editar</a></td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</AdminLayout>

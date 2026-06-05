@@ -78,3 +78,17 @@ export async function getCategoriasAdmin(token: string): Promise<CategoriaRow[]>
   if (error) throw error;
   return data as CategoriaRow[];
 }
+
+export async function getArtistaAdmin(id: number, token: string): Promise<ArtistaRow | null> {
+  const { data, error } = await adminClient(token)
+    .from("artistas").select("id, nombre, slug, pais").eq("id", id).single();
+  if (error) return null;
+  return data as ArtistaRow;
+}
+
+export async function getCategoriaAdmin(id: number, token: string): Promise<CategoriaRow | null> {
+  const { data, error } = await adminClient(token)
+    .from("categorias").select("id, nombre, slug, color").eq("id", id).single();
+  if (error) return null;
+  return data as CategoriaRow;
+}

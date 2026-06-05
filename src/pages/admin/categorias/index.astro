@@ -1,0 +1,43 @@
+---
+import AdminLayout from "../../../components/AdminLayout.astro";
+import { getCategoriasAdmin } from "../../../lib/supabase-admin";
+
+const token = Astro.locals.token!;
+const categorias = await getCategoriasAdmin(token);
+const error = Astro.url.searchParams.get("error");
+---
+
+<AdminLayout title="Categorías" active="categorias">
+  <div class="page-header">
+    <h1>Categorías <span style="color:#a89060;font-size:1rem;">({categorias.length})</span></h1>
+    <a href="/admin/categorias/nueva" class="btn">+ Nueva categoría</a>
+  </div>
+
+  {error && <div class="error">{error}</div>}
+
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Slug</th>
+        <th>Color</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {categorias.map((c) => (
+        <tr>
+          <td><a class="link" href={`/admin/categorias/${c.id}`}>{c.nombre}</a></td>
+          <td style="color:#a89060;font-size:.85rem;">{c.slug}</td>
+          <td>
+            <span style={`display:inline-flex;align-items:center;gap:.5rem;`}>
+              <span style={`width:16px;height:16px;border-radius:50%;background:${c.color};display:inline-block;`}></span>
+              {c.color}
+            </span>
+          </td>
+          <td><a class="link" href={`/admin/categorias/${c.id}`}>Editar</a></td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</AdminLayout>

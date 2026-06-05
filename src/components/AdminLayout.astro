@@ -1,0 +1,78 @@
+---
+interface Props {
+  title: string;
+  active: "canciones" | "artistas" | "categorias";
+}
+const { title, active } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} — Admin</title>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      body { background: #0d0d0d; color: #e8dcc8; font-family: Georgia, serif; min-height: 100vh; }
+      .sidebar { position: fixed; top: 0; left: 0; width: 200px; height: 100vh; background: #111; border-right: 1px solid #2a2015; padding: 1.5rem 1rem; display: flex; flex-direction: column; gap: .25rem; }
+      .brand { color: #d4af5f; font-size: 1rem; font-weight: bold; padding: .5rem .75rem; margin-bottom: 1rem; letter-spacing: .04em; }
+      .nav-link { display: block; padding: .55rem .75rem; border-radius: 4px; color: #a89060; text-decoration: none; font-size: .9rem; }
+      .nav-link:hover { background: #1a1a1a; color: #e8dcc8; }
+      .nav-link.active { background: #2a1e0a; color: #d4af5f; }
+      .nav-sep { height: 1px; background: #2a2015; margin: .75rem 0; }
+      .nav-bottom { margin-top: auto; }
+      .main { margin-left: 200px; padding: 2rem; }
+      .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+      h1 { font-size: 1.4rem; color: #d4af5f; }
+      .btn { padding: .5rem 1.1rem; background: #d4af5f; border: none; border-radius: 4px; color: #0d0d0d; font-weight: bold; cursor: pointer; text-decoration: none; font-size: .9rem; white-space: nowrap; }
+      .btn:hover { background: #e8c870; }
+      .btn-ghost { background: transparent; border: 1px solid #3a2e1e; color: #a89060; }
+      .btn-ghost:hover { border-color: #d4af5f; color: #d4af5f; background: transparent; }
+      .btn-danger { background: transparent; border: 1px solid #8b2020; color: #e07070; }
+      .btn-danger:hover { background: #3a1010; }
+      .error { margin-bottom: 1.25rem; padding: .65rem 1rem; background: #3a1010; border: 1px solid #8b2020; border-radius: 4px; font-size: .875rem; color: #f08080; }
+      table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+      th { text-align: left; padding: .75rem 1rem; background: #1a1a1a; color: #a89060; font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid #3a2e1e; }
+      td { padding: .75rem 1rem; border-bottom: 1px solid #191919; vertical-align: middle; }
+      tr:hover td { background: #111; }
+      .badge { display: inline-block; padding: .2rem .55rem; border-radius: 999px; font-size: .75rem; font-family: sans-serif; }
+      .pub { background: #1a3a1a; color: #6bcf6b; }
+      .bor { background: #3a1a1a; color: #e07070; }
+      a.link { color: #d4af5f; text-decoration: none; }
+      a.link:hover { text-decoration: underline; }
+      .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem; }
+      .field { display: flex; flex-direction: column; gap: .35rem; margin-bottom: 1.25rem; }
+      label { font-size: .85rem; color: #a89060; }
+      input, select, textarea { background: #111; border: 1px solid #3a2e1e; border-radius: 4px; color: #e8dcc8; font-size: .95rem; padding: .6rem .85rem; font-family: inherit; width: 100%; }
+      input:focus, select:focus, textarea:focus { outline: none; border-color: #d4af5f; }
+      textarea { resize: vertical; min-height: 180px; line-height: 1.6; }
+      .check-row { display: flex; align-items: center; gap: .6rem; margin-bottom: 1.5rem; }
+      .check-row input { width: auto; }
+      .submit-row { display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; }
+      .btn-submit { padding: .7rem 1.5rem; background: #d4af5f; border: none; border-radius: 4px; color: #0d0d0d; font-size: 1rem; font-weight: bold; cursor: pointer; }
+      .btn-submit:hover { background: #e8c870; }
+      .spacer { flex: 1; }
+      .form-wrap { max-width: 720px; }
+      @media (max-width: 640px) { .row { grid-template-columns: 1fr; } .sidebar { display: none; } .main { margin-left: 0; } }
+    </style>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <div class="brand">✝ Admin</div>
+      <a href="/admin" class={`nav-link${active === "canciones" ? " active" : ""}`}>Canciones</a>
+      <a href="/admin/artistas" class={`nav-link${active === "artistas" ? " active" : ""}`}>Artistas</a>
+      <a href="/admin/categorias" class={`nav-link${active === "categorias" ? " active" : ""}`}>Categorías</a>
+      <div class="nav-sep"></div>
+      <div class="nav-bottom">
+        <a href="/" class="nav-link">Ver sitio</a>
+        <form method="post" action="/api/admin/logout" style="margin:0">
+          <button type="submit" class="nav-link btn-ghost" style="width:100%;text-align:left;border:none;cursor:pointer;">Salir</button>
+        </form>
+      </div>
+    </aside>
+    <main class="main">
+      <slot />
+    </main>
+  </body>
+</html>

@@ -1,0 +1,48 @@
+---
+import AdminLayout from "../../../components/AdminLayout.astro";
+import { getCategoriaAdmin } from "../../../lib/supabase-admin";
+
+const token = Astro.locals.token!;
+const id = Number(Astro.params.id);
+if (!id) return Astro.redirect("/admin/categorias");
+
+const categoria = await getCategoriaAdmin(id, token);
+if (!categoria) return Astro.redirect("/admin/categorias");
+
+const error = Astro.url.searchParams.get("error");
+---
+
+<AdminLayout title={`Editar: ${categoria.nombre}`} active="categorias">
+  <div class="page-header">
+    <h1>Editar: {categoria.nombre}</h1>
+    <a href="/admin/categorias" class="btn btn-ghost">← Volver</a>
+  </div>
+
+  {error && <div class="error">{error}</div>}
+
+  <div class="form-wrap">
+    <form method="post" action={`/api/admin/categorias/${id}`}>
+      <div class="row">
+        <div class="field">
+          <label for="nombre">Nombre *</label>
+          <input id="nombre" name="nombre" type="text" required value={categoria.nombre} />
+        </div>
+        <div class="field">
+          <label for="slug">Slug *</label>
+          <input id="slug" name="slug" type="text" required value={categoria.slug} />
+        </div>
+      </div>
+      <div class="field" style="max-width:200px;">
+        <label for="color">Color</label>
+        <input id="color" name="color" type="color" value={categoria.color} style="height:42px;padding:.25rem;" />
+      </div>
+      <div class="submit-row">
+        <button type="submit" class="btn-submit">Guardar cambios</button>
+        <a href="/admin/categorias" class="btn btn-ghost">Cancelar</a>
+        <div class="spacer"></div>
+        <button type="submit" name="_method" value="DELETE" class="btn btn-danger"
+          onclick="return confirm('¿Eliminar esta categoría?')">Eliminar</button>
+      </div>
+    </form>
+  </div>
+</AdminLayout>

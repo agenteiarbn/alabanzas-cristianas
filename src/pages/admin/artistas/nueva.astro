@@ -1,0 +1,48 @@
+---
+import AdminLayout from "../../../components/AdminLayout.astro";
+const error = Astro.url.searchParams.get("error");
+---
+
+<AdminLayout title="Nuevo artista" active="artistas">
+  <div class="page-header">
+    <h1>Nuevo artista</h1>
+    <a href="/admin/artistas" class="btn btn-ghost">← Volver</a>
+  </div>
+
+  {error && <div class="error">{error}</div>}
+
+  <div class="form-wrap">
+    <form method="post" action="/api/admin/artistas">
+      <div class="row">
+        <div class="field">
+          <label for="nombre">Nombre *</label>
+          <input id="nombre" name="nombre" type="text" required oninput="autoSlug(this.value)" />
+        </div>
+        <div class="field">
+          <label for="slug">Slug *</label>
+          <input id="slug" name="slug" type="text" required />
+        </div>
+      </div>
+      <div class="field">
+        <label for="pais">País</label>
+        <input id="pais" name="pais" type="text" placeholder="ej. México, España" />
+      </div>
+      <div class="field">
+        <label for="bio">Biografía</label>
+        <textarea id="bio" name="bio" placeholder="Breve descripción del artista..."></textarea>
+      </div>
+      <div class="submit-row">
+        <button type="submit" class="btn-submit">Guardar artista</button>
+        <a href="/admin/artistas" class="btn btn-ghost">Cancelar</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    function autoSlug(nombre) {
+      const s = document.getElementById('slug');
+      if (!s._edited) s.value = nombre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
+    }
+    document.getElementById('slug').addEventListener('input', function(){ this._edited = true; });
+  </script>
+</AdminLayout>

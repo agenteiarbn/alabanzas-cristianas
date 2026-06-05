@@ -1,0 +1,44 @@
+---
+import AdminLayout from "../../../components/AdminLayout.astro";
+const error = Astro.url.searchParams.get("error");
+---
+
+<AdminLayout title="Nueva categoría" active="categorias">
+  <div class="page-header">
+    <h1>Nueva categoría</h1>
+    <a href="/admin/categorias" class="btn btn-ghost">← Volver</a>
+  </div>
+
+  {error && <div class="error">{error}</div>}
+
+  <div class="form-wrap">
+    <form method="post" action="/api/admin/categorias">
+      <div class="row">
+        <div class="field">
+          <label for="nombre">Nombre *</label>
+          <input id="nombre" name="nombre" type="text" required oninput="autoSlug(this.value)" />
+        </div>
+        <div class="field">
+          <label for="slug">Slug *</label>
+          <input id="slug" name="slug" type="text" required />
+        </div>
+      </div>
+      <div class="field" style="max-width:200px;">
+        <label for="color">Color</label>
+        <input id="color" name="color" type="color" value="#d4af5f" style="height:42px;padding:.25rem;" />
+      </div>
+      <div class="submit-row">
+        <button type="submit" class="btn-submit">Guardar categoría</button>
+        <a href="/admin/categorias" class="btn btn-ghost">Cancelar</a>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    function autoSlug(nombre) {
+      const s = document.getElementById('slug');
+      if (!s._edited) s.value = nombre.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
+    }
+    document.getElementById('slug').addEventListener('input', function(){ this._edited = true; });
+  </script>
+</AdminLayout>

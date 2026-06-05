@@ -18,12 +18,23 @@ function youtubeId(url: string | null): string | null {
 }
 
 const ytId = youtubeId(cancion.youtube_url);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "MusicComposition",
+  "name": cancion.titulo,
+  "composer": { "@type": "Person", "name": cancion.artistas.nombre },
+  "inLanguage": "es",
+  "genre": cancion.categorias.nombre,
+  ...(cancion.anio ? { "dateCreated": String(cancion.anio) } : {}),
+};
 ---
 
 <Layout
   title={`${cancion.titulo} — ${cancion.artistas.nombre} | Alabanzas Cristinas`}
-  description={`Letra de "${cancion.titulo}" por ${cancion.artistas.nombre}`}
+  description={`Letra de "${cancion.titulo}" por ${cancion.artistas.nombre}. ${cancion.letra.split('\n').find(l => l.trim()) ?? ''}`}
 >
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} slot="head" />
   <div class="container">
     <div class="song-detail">
 

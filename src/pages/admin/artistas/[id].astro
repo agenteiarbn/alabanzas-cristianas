@@ -1,0 +1,48 @@
+---
+import AdminLayout from "../../../components/AdminLayout.astro";
+import { getArtistaAdmin } from "../../../lib/supabase-admin";
+
+const token = Astro.locals.token!;
+const id = Number(Astro.params.id);
+if (!id) return Astro.redirect("/admin/artistas");
+
+const artista = await getArtistaAdmin(id, token);
+if (!artista) return Astro.redirect("/admin/artistas");
+
+const error = Astro.url.searchParams.get("error");
+---
+
+<AdminLayout title={`Editar: ${artista.nombre}`} active="artistas">
+  <div class="page-header">
+    <h1>Editar: {artista.nombre}</h1>
+    <a href="/admin/artistas" class="btn btn-ghost">← Volver</a>
+  </div>
+
+  {error && <div class="error">{error}</div>}
+
+  <div class="form-wrap">
+    <form method="post" action={`/api/admin/artistas/${id}`}>
+      <div class="row">
+        <div class="field">
+          <label for="nombre">Nombre *</label>
+          <input id="nombre" name="nombre" type="text" required value={artista.nombre} />
+        </div>
+        <div class="field">
+          <label for="slug">Slug *</label>
+          <input id="slug" name="slug" type="text" required value={artista.slug} />
+        </div>
+      </div>
+      <div class="field">
+        <label for="pais">País</label>
+        <input id="pais" name="pais" type="text" value={artista.pais ?? ""} />
+      </div>
+      <div class="submit-row">
+        <button type="submit" class="btn-submit">Guardar cambios</button>
+        <a href="/admin/artistas" class="btn btn-ghost">Cancelar</a>
+        <div class="spacer"></div>
+        <button type="submit" name="_method" value="DELETE" class="btn btn-danger"
+          onclick="return confirm('¿Eliminar este artista?')">Eliminar</button>
+      </div>
+    </form>
+  </div>
+</AdminLayout>
