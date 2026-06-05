@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && node -e \"const fs=require('fs');const p='dist/server/wrangler.json';const w=JSON.parse(fs.readFileSync(p,'utf8'));delete w.assets;fs.writeFileSync(p,JSON.stringify(w));\"",
+    "build": "astro build && node scripts/postbuild.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },
