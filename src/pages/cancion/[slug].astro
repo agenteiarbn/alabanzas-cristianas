@@ -69,6 +69,20 @@ const jsonLd = {
         <button class="action-icon" data-heart data-id={cancion.id} title="Guardar en favoritos" aria-label="Guardar en favoritos">♡</button>
         <button class="action-icon" title="Compartir">↗</button>
         <button class="action-icon" title="Imprimir">⊞</button>
+        <a
+          href={`/api/cancion/${cancion.slug}/propresenter`}
+          download={`${cancion.slug}.pro6`}
+          class="action-icon action-icon--download"
+          title="Descargar para ProPresenter (.pro6)"
+          aria-label="Descargar para ProPresenter"
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          <span class="action-icon-label">ProPresenter</span>
+        </a>
       </div>
 
       <!-- Lyrics -->
