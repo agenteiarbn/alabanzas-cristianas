@@ -258,11 +258,30 @@ const currentQ   = url.searchParams.get("q") ?? "";
 
       <ul class="menu-panel-nav">
         <li>
-          <a href="/" class="menu-panel-link">
+          <a href="/?cat=alabanzas" class="menu-panel-link"
+            aria-current={currentCat === "alabanzas" ? "page" : undefined}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
               <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
             </svg>
-            Canciones
+            Alabanzas
+          </a>
+        </li>
+        <li>
+          <a href="/?cat=adoraciones" class="menu-panel-link"
+            aria-current={currentCat === "adoraciones" ? "page" : undefined}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
+            </svg>
+            Adoraciones
+          </a>
+        </li>
+        <li>
+          <a href="/?cat=himnos" class="menu-panel-link"
+            aria-current={currentCat === "himnos" ? "page" : undefined}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3z"/>
+            </svg>
+            Himnos
           </a>
         </li>
         <li>
@@ -282,33 +301,7 @@ const currentQ   = url.searchParams.get("q") ?? "";
             Artistas
           </a>
         </li>
-        <li>
-          <a href="/" class="menu-panel-link">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <path d="M12 2a3 3 0 0 0-3 3v4H4l1 12h14l1-12h-5V5a3 3 0 0 0-3-3z"/>
-            </svg>
-            Adoraciones
-          </a>
-        </li>
-        <li>
-          <a href="/suscripcion" class="menu-panel-link menu-panel-link--premium">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-            </svg>
-            Premium
-          </a>
-        </li>
       </ul>
-
-      <div class="menu-panel-cats">
-        <p class="menu-panel-cats-title">Géneros</p>
-        <a href="/?cat=todas" class="menu-panel-cat-link"
-          aria-current={currentCat === "todas" ? "page" : undefined}>Todas</a>
-        {categorias.map((c) => (
-          <a href={`/?cat=${c.slug}`} class="menu-panel-cat-link"
-            aria-current={currentCat === c.slug ? "page" : undefined}>{c.nombre}</a>
-        ))}
-      </div>
 
       <div class="menu-panel-footer">
         <a href="/suscripcion" class="menu-panel-subs-btn">
