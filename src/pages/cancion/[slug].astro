@@ -1,0 +1,69 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCancion } from "../../lib/supabase";
+
+const { slug } = Astro.params;
+
+if (!slug) return Astro.redirect("/");
+
+const cancion = await getCancion(slug);
+
+if (!cancion) return Astro.redirect("/");
+
+// Extraer ID de YouTube si existe
+function youtubeId(url: string | null): string | null {
+  if (!url) return null;
+  const m = url.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
+const ytId = youtubeId(cancion.youtube_url);
+---
+
+<Layout
+  title={`${cancion.titulo} — ${cancion.artistas.nombre} | Alabanzas Cristinas`}
+  description={`Letra de "${cancion.titulo}" por ${cancion.artistas.nombre}`}
+>
+  <div class="container">
+    <div class="song-detail">
+
+      <!-- BACK -->
+      <a href="/" class="back-link">← Volver al catálogo</a>
+
+      <!-- HEADER -->
+      <div class="song-detail-header">
+        <p class="detail-cat">✦ {cancion.categorias.nombre}</p>
+        <h1 class="detail-title">{cancion.titulo}</h1>
+        <p class="detail-artist">{cancion.artistas.nombre}</p>
+
+        <div class="gold-rule" style="margin: 1rem 0;"></div>
+
+        <div class="detail-tags">
+          {cancion.anio  && <span class="tag">{cancion.anio}</span>}
+          {cancion.tono  && <span class="tag">Tono: {cancion.tono}</span>}
+          {cancion.artistas.pais && <span class="tag">{cancion.artistas.pais}</span>}
+        </div>
+      </div>
+
+      <!-- LETRA -->
+      <div class="lyrics-block" aria-label="Letra de la canción">
+        {cancion.letra}
+      </div>
+
+      <!-- YOUTUBE (opcional) -->
+      {ytId && (
+        <div class="youtube-embed">
+          <h3>▶ Escuchar canción</h3>
+          <iframe
+            src={`https://www.youtube.com/embed/${ytId}`}
+            title={`${cancion.titulo} — ${cancion.artistas.nombre}`}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            loading="lazy"
+          ></iframe>
+        </div>
+      )}
+
+    </div>
+  </div>
+</Layout>

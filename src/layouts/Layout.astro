@@ -1,0 +1,47 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Alabanzas Cristinas",
+  description = "Letras de adoraciones y alabanzas cristianas",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+
+    <!-- Favicon simple (cruz) -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✝</text></svg>"
+    />
+
+    <title>{title}</title>
+  </head>
+
+  <body>
+    <div class="bg-scene" aria-hidden="true"></div>
+
+    <div class="page">
+      <slot />
+    </div>
+
+    <footer class="site-footer">
+      <p>✝ Alabanzas Cristinas &mdash; Letras para elevar el alma</p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,88 @@
+---
+import Layout from "../layouts/Layout.astro";
+import SongCard from "../components/SongCard.astro";
+import { getCanciones, getCategorias } from "../lib/supabase";
+
+// Leer parámetros de búsqueda y filtro desde la URL
+const url = new URL(Astro.request.url);
+const q   = url.searchParams.get("q")?.trim() ?? "";
+const cat = url.searchParams.get("cat") ?? "todas";
+
+// Obtener datos de Supabase
+const [todasCanciones, categorias] = await Promise.all([
+  getCanciones(),
+  getCategorias(),
+]);
+
+// Filtrar en servidor (búsqueda simple; para full-text usa buscarCanciones())
+const canciones = todasCanciones.filter((c) => {
+  const matchCat  = cat === "todas" || c.categorias.slug === cat;
+  const matchQ    = q === "" ||
+    c.titulo.toLowerCase().includes(q.toLowerCase()) ||
+    c.artistas.nombre.toLowerCase().includes(q.toLowerCase());
+  return matchCat && matchQ;
+});
+---
+
+<Layout
+  title="Alabanzas Cristinas — Letras de Adoración y Alabanza"
+  description="Encuentra letras de adoraciones y alabanzas cristianas en español."
+>
+  <!-- HEADER -->
+  <header class="site-header container">
+    <div class="eyebrow">✦ ✝ ✦</div>
+    <h1>Alabanzas<br />&amp; Adoración</h1>
+    <p class="tagline">Letras de canciones que elevan el alma</p>
+    <div class="gold-rule"></div>
+  </header>
+
+  <!-- NAV CATEGORÍAS -->
+  <nav class="site-nav container" aria-label="Categorías">
+    <a
+      href="/?cat=todas"
+      class="nav-link"
+      aria-current={cat === "todas" ? "page" : undefined}
+    >Todas</a>
+    {categorias.map((c) => (
+      <a
+        href={`/?cat=${c.slug}`}
+        class="nav-link"
+        aria-current={cat === c.slug ? "page" : undefined}
+      >{c.nombre}</a>
+    ))}
+  </nav>
+
+  <!-- BÚSQUEDA -->
+  <div class="container">
+    <form class="search-form" method="get" action="/">
+      <input type="hidden" name="cat" value={cat} />
+      <input
+        class="search-input"
+        type="search"
+        name="q"
+        value={q}
+        placeholder="Buscar por título o artista..."
+        autocomplete="off"
+      />
+      <button class="btn-search" type="submit">Buscar</button>
+    </form>
+
+    <!-- RESULTADO COUNT -->
+    <p class="result-count">
+      {canciones.length} {canciones.length === 1 ? "canción" : "canciones"} encontradas
+    </p>
+
+    <!-- GRID -->
+    <div class="songs-grid">
+      {canciones.length === 0 ? (
+        <div class="empty-state">
+          No se encontraron canciones{q ? ` para "${q}"` : ""}.
+        </div>
+      ) : (
+        canciones.map((cancion, i) => (
+          <SongCard cancion={cancion} index={i} />
+        ))
+      )}
+    </div>
+  </div>
+</Layout>

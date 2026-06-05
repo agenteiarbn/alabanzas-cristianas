@@ -1,0 +1,29 @@
+---
+import type { Cancion } from "../lib/supabase";
+
+interface Props {
+  cancion: Cancion;
+  index?: number;
+}
+
+const { cancion, index = 0 } = Astro.props;
+const primerVerso = cancion.letra.split("\n").find((l) => l.trim() !== "") ?? "";
+---
+
+<a
+  href={`/cancion/${cancion.slug}`}
+  class="song-card"
+  style={`animation-delay: ${index * 0.05}s`}
+>
+  <span class="card-badge">✦ {cancion.categorias.nombre}</span>
+
+  <h2 class="card-title">{cancion.titulo}</h2>
+  <p class="card-artist">{cancion.artistas.nombre}</p>
+
+  <p class="card-preview">{primerVerso}</p>
+
+  <div class="card-meta">
+    {cancion.tono && <span class="card-tono">{cancion.tono}</span>}
+    <span class="card-arrow">→</span>
+  </div>
+</a>

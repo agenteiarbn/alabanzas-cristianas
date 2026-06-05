@@ -1,0 +1,19 @@
+{
+  "name": "alabanzas-cristinas",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^13.6.1",
+    "@supabase/supabase-js": "^2.45.0",
+    "astro": "^6.4.4"
+  },
+  "devDependencies": {
+    "wrangler": "^4.83.0"
+  }
+}
