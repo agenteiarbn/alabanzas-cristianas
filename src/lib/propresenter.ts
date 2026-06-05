@@ -66,23 +66,23 @@ function makeRTF(text: string): string {
 
 // ── WinFlowData (Windows XAML FlowDocument, UTF-16 LE) ──────────────────────
 // PP7 on Windows reads WinFlowData instead of RTFData.
+// XAML rules: <LineBreak/> must be between <Run> elements, never inside one.
+// Encoding: UTF-8 (btoa of pure-ASCII XAML, since non-ASCII is escaped).
 
 function makeWinFlow(text: string): string {
-  const escaped = text.trim().split("\n").map(xmlEscFull).join("<LineBreak/>");
+  const runs = text
+    .trim()
+    .split("\n")
+    .map((line) => `<Run Foreground="#FFFFFFFF" FontWeight="Bold">${xmlEscFull(line)}</Run>`)
+    .join("<LineBreak/>");
 
   const xaml =
     `<FlowDocument xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"` +
     ` FontFamily="Arial" FontSize="80" TextAlignment="Center">` +
-    `<Paragraph><Run Foreground="#FFFFFFFF" FontWeight="Bold">${escaped}</Run></Paragraph>` +
+    `<Paragraph>${runs}</Paragraph>` +
     `</FlowDocument>`;
 
-  // Encode as UTF-16 LE with BOM so PP7 parses it correctly.
-  let bytes = "\xFF\xFE";
-  for (let i = 0; i < xaml.length; i++) {
-    const c = xaml.charCodeAt(i);
-    bytes += String.fromCharCode(c & 0xff, (c >> 8) & 0xff);
-  }
-  return btoa(bytes);
+  return btoa(xaml);
 }
 
 // ── Section parser ───────────────────────────────────────────────────────────
