@@ -30,6 +30,15 @@ const currentQ   = url.searchParams.get("q") ?? "";
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✝</text></svg>" />
     <title>{title}</title>
     <slot name="head" />
+    <!-- Anti-flash: aplica el tema antes de que el browser pinte -->
+    <script is:inline>
+      (function(){
+        var t=localStorage.getItem('theme')||'auto';
+        if(t==='light'){document.documentElement.setAttribute('data-theme','light');}
+        else if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');}
+        else{var dark=window.matchMedia('(prefers-color-scheme:dark)').matches;document.documentElement.setAttribute('data-theme',dark?'dark':'light');}
+      })();
+    </script>
   </head>
 
   <body>
@@ -201,13 +210,31 @@ const currentQ   = url.searchParams.get("q") ?? "";
           <p class="footer-logo-sm">
             <span class="logo-cross">✝</span> Alabanzas Cristinas
           </p>
-          <p class="footer-copy">&copy; {new Date().getFullYear()} Alabanzas Cristinas — Letras de adoración en español</p>
+
+          <div class="theme-switcher">
+            <span class="theme-switcher-label">Pantalla</span>
+            <button class="theme-btn" data-theme-val="auto">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+              Automático
+            </button>
+            <button class="theme-btn" data-theme-val="light">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+              Claro
+            </button>
+            <button class="theme-btn" data-theme-val="dark">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+              Oscuro
+            </button>
+          </div>
+
+          <p class="footer-copy">&copy; {new Date().getFullYear()} Alabanzas Cristinas</p>
         </div>
       </div>
 
     </footer>
 
     <script>
+      // ── Menu panel ──────────────────────────────────────────
       const openBtn  = document.getElementById('menu-open-btn');
       const closeBtn = document.getElementById('menu-close-btn');
       const overlay  = document.getElementById('menu-overlay');
@@ -221,7 +248,6 @@ const currentQ   = url.searchParams.get("q") ?? "";
         openBtn?.setAttribute('aria-expanded', 'true');
         document.body.style.overflow = 'hidden';
       }
-
       function closeMenu() {
         panel?.classList.remove('open');
         overlay?.classList.remove('open');
@@ -234,9 +260,41 @@ const currentQ   = url.searchParams.get("q") ?? "";
       openBtn?.addEventListener('click', openMenu);
       closeBtn?.addEventListener('click', closeMenu);
       overlay?.addEventListener('click', closeMenu);
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMenu(); });
 
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeMenu();
+      // ── Theme switcher ──────────────────────────────────────
+      const root = document.documentElement;
+      const saved = localStorage.getItem('theme') || 'auto';
+
+      function applyTheme(t: string) {
+        if (t === 'auto') {
+          const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          root.setAttribute('data-theme', dark ? 'dark' : 'light');
+        } else {
+          root.setAttribute('data-theme', t);
+        }
+      }
+
+      function syncButtons(active: string) {
+        document.querySelectorAll<HTMLButtonElement>('[data-theme-val]').forEach(btn => {
+          btn.classList.toggle('theme-btn--active', btn.dataset.themeVal === active);
+        });
+      }
+
+      syncButtons(saved);
+
+      document.querySelectorAll<HTMLButtonElement>('[data-theme-val]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const t = btn.dataset.themeVal!;
+          localStorage.setItem('theme', t);
+          applyTheme(t);
+          syncButtons(t);
+        });
+      });
+
+      // Seguir cambios del sistema cuando está en "auto"
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+        if ((localStorage.getItem('theme') || 'auto') === 'auto') applyTheme('auto');
       });
     </script>
   </body>
