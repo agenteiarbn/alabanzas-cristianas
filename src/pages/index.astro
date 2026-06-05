@@ -4,14 +4,11 @@ import SongCard from "../components/SongCard.astro";
 import { getCanciones, getCategorias } from "../lib/supabase";
 
 const url = new URL(Astro.request.url);
-const q   = url.searchParams.get("q")?.trim() ?? "";
-const cat = url.searchParams.get("cat") ?? "todas";
+const q    = url.searchParams.get("q")?.trim() ?? "";
+const cat  = url.searchParams.get("cat") ?? "todas";
 const page = Math.max(1, Number(url.searchParams.get("page") ?? "1"));
 
-const [resultado, categorias] = await Promise.all([
-  getCanciones(page, cat),
-  getCategorias(),
-]);
+const resultado = await getCanciones(page, cat);
 
 const canciones = q
   ? resultado.data.filter((c) =>
@@ -30,8 +27,9 @@ function pageUrl(p: number) {
 
 <Layout
   title="Alabanzas Cristinas — Letras de Adoración y Alabanza"
-  description="Encuentra letras de adoraciones y alabanzas cristianas en español. Más de {resultado.total} canciones."
+  description={`Encuentra letras de adoraciones y alabanzas cristianas en español. Más de ${resultado.total} canciones.`}
 >
+  <!-- Hero decorativo -->
   <header class="site-header container">
     <div class="eyebrow">✦ ✝ ✦</div>
     <h1>Alabanzas<br />&amp; Adoración</h1>
@@ -39,31 +37,7 @@ function pageUrl(p: number) {
     <div class="gold-rule"></div>
   </header>
 
-  <nav class="site-nav container" aria-label="Categorías">
-    <a href="/?cat=todas" class="nav-link" aria-current={cat === "todas" ? "page" : undefined}>Todas</a>
-    {categorias.map((c) => (
-      <a href={`/?cat=${c.slug}`} class="nav-link" aria-current={cat === c.slug ? "page" : undefined}>{c.nombre}</a>
-    ))}
-  </nav>
-
   <div class="container">
-    <div class="search-form">
-      <input
-        id="search-input"
-        class="search-input"
-        type="search"
-        value={q}
-        placeholder="Buscar por título o artista..."
-        autocomplete="off"
-      />
-      <noscript>
-        <form method="get" action="/">
-          <input type="hidden" name="cat" value={cat} />
-          <button class="btn-search" type="submit">Buscar</button>
-        </form>
-      </noscript>
-    </div>
-
     <p class="result-count" id="result-count">
       {canciones.length} {canciones.length === 1 ? "canción" : "canciones"} encontradas
     </p>
@@ -89,18 +63,20 @@ function pageUrl(p: number) {
 </Layout>
 
 <style>
-  .pagination { display: flex; gap: .5rem; justify-content: center; margin-top: 2.5rem; flex-wrap: wrap; }
+  .pagination { display: flex; gap: .5rem; justify-content: center; margin-top: 2.5rem; flex-wrap: wrap; padding-bottom: 2rem; }
   .page-link { padding: .45rem .85rem; border: 1px solid #3a2e1e; border-radius: 4px; color: #a89060; text-decoration: none; font-size: .9rem; }
-  .page-link:hover { border-color: #d4af5f; color: #d4af5f; }
-  .page-link.active { background: #d4af5f; color: #0d0d0d; border-color: #d4af5f; font-weight: bold; }
+  .page-link:hover { border-color: var(--gold); color: var(--gold); }
+  .page-link.active { background: var(--gold); color: #0d0d0d; border-color: var(--gold); font-weight: bold; }
 </style>
 
 <script define:vars={{ cat }}>
-  const input = document.getElementById('search-input');
-  const grid = document.getElementById('songs-grid');
+  // Búsqueda en tiempo real usando el input del header
+  const input = document.getElementById('header-search');
+  const grid  = document.getElementById('songs-grid');
   const count = document.getElementById('result-count');
-  let timer;
+  if (!input || !grid || !count) throw new Error('missing elements');
 
+  let timer;
   input.addEventListener('input', () => {
     clearTimeout(timer);
     timer = setTimeout(async () => {
@@ -108,31 +84,32 @@ function pageUrl(p: number) {
       const params = new URLSearchParams({ cat });
       if (q) params.set('q', q);
 
-      const res = await fetch(`/api/songs?${params}`);
-      const json = await res.json();
+      try {
+        const res  = await fetch(`/api/songs?${params}`);
+        const json = await res.json();
+        if (!json.ok) return;
 
-      if (!json.ok) return;
-      const songs = json.data;
+        const songs = json.data;
+        count.textContent = `${songs.length} ${songs.length === 1 ? 'canción' : 'canciones'} encontradas`;
 
-      count.textContent = `${songs.length} ${songs.length === 1 ? 'canción' : 'canciones'} encontradas`;
+        if (songs.length === 0) {
+          grid.innerHTML = `<div class="empty-state">No se encontraron canciones${q ? ` para "${q}"` : ''}.</div>`;
+          return;
+        }
 
-      if (songs.length === 0) {
-        grid.innerHTML = `<div class="empty-state">No se encontraron canciones${q ? ` para "${q}"` : ''}.</div>`;
-        return;
-      }
-
-      grid.innerHTML = songs.map((c, i) => `
-        <a href="/cancion/${c.slug}" class="song-card" style="animation-delay:${i * 0.05}s">
-          <span class="card-badge">✦ ${c.categorias.nombre}</span>
-          <h2 class="card-title">${c.titulo}</h2>
-          <p class="card-artist">${c.artistas.nombre}</p>
-          <p class="card-preview">${c.letra.split('\n').find(l => l.trim()) ?? ''}</p>
-          <div class="card-meta">
-            ${c.tono ? `<span class="card-tono">${c.tono}</span>` : ''}
-            <span class="card-arrow">→</span>
-          </div>
-        </a>
-      `).join('');
+        grid.innerHTML = songs.map((c, i) => `
+          <a href="/cancion/${c.slug}" class="song-card" style="animation-delay:${i * 0.05}s">
+            <span class="card-badge">✦ ${c.categorias.nombre}</span>
+            <h2 class="card-title">${c.titulo}</h2>
+            <p class="card-artist">${c.artistas.nombre}</p>
+            <p class="card-preview">${(c.letra.split('\n').find(l => l.trim()) ?? '').replace(/</g,'&lt;')}</p>
+            <div class="card-meta">
+              ${c.tono ? `<span class="card-tono">${c.tono}</span>` : ''}
+              <span class="card-arrow">→</span>
+            </div>
+          </a>
+        `).join('');
+      } catch {}
     }, 300);
   });
 </script>

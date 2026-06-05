@@ -57,20 +57,159 @@ a:hover { color: var(--gold-light); }
   padding: 0 1.25rem;
 }
 
-/* ── Site Header ────────────────────────────────────────────── */
+/* ── Topbar (sticky header) ─────────────────────────────────── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10, 13, 26, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(212,175,95,.12);
+}
+
+.topbar-inner {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  height: 62px;
+}
+
+.topbar-logo {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.logo-cross {
+  font-size: 1.15rem;
+  color: var(--gold);
+}
+.logo-text {
+  font-family: var(--font-title);
+  font-size: .8rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+}
+
+.topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: .2rem;
+  flex: 1;
+  justify-content: center;
+}
+
+.topbar-nav-link {
+  font-family: var(--font-title);
+  font-size: .6rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  padding: .35rem .9rem;
+  border: 1px solid transparent;
+  border-radius: 1px;
+  color: var(--text-muted);
+  transition: all .22s;
+  text-decoration: none;
+}
+.topbar-nav-link:hover,
+.topbar-nav-link[aria-current="page"] {
+  border-color: rgba(212,175,95,.4);
+  color: var(--gold-light);
+  background: rgba(212,175,95,.07);
+}
+
+.topbar-search {
+  display: flex;
+  align-items: center;
+  background: rgba(212,175,95,.05);
+  border: 1px solid rgba(212,175,95,.18);
+  border-radius: 2px;
+  overflow: hidden;
+  flex-shrink: 0;
+  transition: border-color .25s;
+}
+.topbar-search:focus-within {
+  border-color: rgba(212,175,95,.5);
+  background: rgba(212,175,95,.09);
+}
+.topbar-search-input {
+  background: transparent;
+  border: none;
+  padding: .45rem .75rem;
+  font-family: var(--font-body);
+  font-size: .88rem;
+  color: var(--text);
+  outline: none;
+  width: 180px;
+}
+.topbar-search-input::placeholder { color: rgba(176,160,128,.45); }
+.topbar-search-btn {
+  background: transparent;
+  border: none;
+  border-left: 1px solid rgba(212,175,95,.18);
+  padding: .45rem .65rem;
+  color: rgba(212,175,95,.5);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color .2s;
+}
+.topbar-search-btn:hover { color: var(--gold); }
+
+.mobile-menu-btn {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: .4rem;
+  margin-left: auto;
+}
+.mobile-menu-btn span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--gold);
+  border-radius: 1px;
+  transition: all .25s;
+}
+
+.mobile-nav {
+  display: none;
+  flex-direction: column;
+  border-top: 1px solid rgba(212,175,95,.1);
+  background: rgba(10,13,26,.97);
+}
+.mobile-nav.open { display: flex; }
+.mobile-nav-link {
+  padding: .75rem 1.25rem;
+  font-family: var(--font-title);
+  font-size: .65rem;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(212,175,95,.07);
+  transition: color .2s;
+}
+.mobile-nav-link:hover { color: var(--gold); }
+
+/* ── Page hero (homepage only) ──────────────────────────────── */
 .site-header {
   text-align: center;
   padding: 3.5rem 1rem 2rem;
   animation: fadeDown .8s ease both;
 }
-
 .site-header .eyebrow {
   font-size: 1.1rem;
   color: var(--gold);
   letter-spacing: .5em;
   margin-bottom: .5rem;
 }
-
 .site-header h1 {
   font-family: var(--font-title);
   font-size: clamp(2rem, 5.5vw, 3.8rem);
@@ -83,7 +222,6 @@ a:hover { color: var(--gold-light); }
   background-clip: text;
   line-height: 1.1;
 }
-
 .site-header .tagline {
   font-style: italic;
   color: var(--text-muted);
@@ -98,16 +236,8 @@ a:hover { color: var(--gold-light); }
   margin: 1.2rem auto;
 }
 
-/* ── Nav ────────────────────────────────────────────────────── */
-.site-nav {
-  display: flex;
-  justify-content: center;
-  gap: .4rem;
-  flex-wrap: wrap;
-  margin-bottom: 2rem;
-  animation: fadeDown .8s .15s ease both;
-}
-
+/* ── Nav (legacy, kept for compatibility) ───────────────────── */
+.site-nav { display: none; }
 .nav-link {
   font-family: var(--font-title);
   font-size: .65rem;
@@ -118,9 +248,9 @@ a:hover { color: var(--gold-light); }
   border-radius: 1px;
   color: var(--text-muted);
   transition: all .25s;
+  text-decoration: none;
 }
-.nav-link:hover,
-.nav-link[aria-current="page"] {
+.nav-link:hover, .nav-link[aria-current="page"] {
   border-color: var(--gold);
   color: var(--gold-light);
   background: rgba(212,175,95,.08);
@@ -380,13 +510,55 @@ a:hover { color: var(--gold-light); }
 
 /* ── Footer ─────────────────────────────────────────────────── */
 .site-footer {
-  text-align: center;
-  padding: 2rem 1rem;
-  border-top: 1px solid var(--border);
-  font-size: .85rem;
-  color: var(--text-faint);
-  font-style: italic;
+  border-top: 1px solid rgba(212,175,95,.12);
+  background: rgba(8, 10, 20, 0.6);
+  margin-top: 3rem;
 }
+.footer-inner {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 3rem;
+  padding: 3rem 1.25rem 2rem;
+}
+.footer-logo {
+  font-family: var(--font-title);
+  font-size: .85rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  margin-bottom: .6rem;
+}
+.footer-tagline {
+  font-style: italic;
+  color: var(--text-muted);
+  font-size: .92rem;
+  line-height: 1.5;
+}
+.footer-copy {
+  font-size: .8rem;
+  color: var(--text-faint);
+}
+.footer-heading {
+  font-family: var(--font-title);
+  font-size: .6rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 1rem;
+}
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+.footer-links a {
+  font-size: .9rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color .2s;
+}
+.footer-links a:hover { color: var(--gold-light); }
 
 /* ── Animations ─────────────────────────────────────────────── */
 @keyframes fadeDown {
@@ -399,6 +571,11 @@ a:hover { color: var(--gold-light); }
 }
 
 /* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .topbar-nav, .topbar-search { display: none; }
+  .mobile-menu-btn { display: flex; }
+  .footer-inner { grid-template-columns: 1fr; gap: 1.75rem; padding-bottom: 2.5rem; }
+}
 @media (max-width: 600px) {
   .songs-grid { grid-template-columns: 1fr; }
   .search-form { flex-direction: column; }
