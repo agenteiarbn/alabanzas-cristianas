@@ -1,0 +1,140 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Mi Perfil — Alabanzas Cristianas" description="Tu perfil en Alabanzas Cristianas">
+  <div class="container" id="perfil-container">
+
+    <!-- Loading skeleton -->
+    <div id="perfil-loading" class="profile-loading">
+      <p>Cargando perfil…</p>
+    </div>
+
+    <!-- Not logged in state -->
+    <div id="perfil-noauth" hidden>
+      <div class="profile-empty" style="padding: 5rem 1rem;">
+        <p style="font-size: 3rem; margin-bottom: 1rem;">✝</p>
+        <p style="font-size: 1.2rem; margin-bottom: .5rem; color: var(--text-muted);">Inicia sesión para ver tu perfil</p>
+        <p><a href="/" id="perfil-login-trigger">Iniciar sesión →</a></p>
+      </div>
+    </div>
+
+    <!-- Logged in state -->
+    <div id="perfil-content" hidden>
+
+      <!-- Hero -->
+      <div class="profile-hero">
+        <div class="profile-avatar" id="perfil-avatar">U</div>
+        <div class="profile-info">
+          <h1 class="profile-name" id="perfil-name">Usuario</h1>
+          <p class="profile-email" id="perfil-email">—</p>
+          <div class="profile-stats">
+            <div class="profile-stat">
+              <div class="profile-stat-n" id="perfil-fav-count">0</div>
+              <div class="profile-stat-l">Favoritos</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Favorites section -->
+      <h2 class="profile-section-title">✦ Mis Favoritos</h2>
+      <div id="perfil-favs-grid" class="songs-grid">
+        <div class="profile-empty">
+          <p>Aún no tienes canciones guardadas.</p>
+          <p style="margin-top:.5rem;"><a href="/">Explorar canciones →</a></p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { createClient } from '@supabase/supabase-js';
+
+  const supabase = createClient(
+    import.meta.env.PUBLIC_SUPABASE_URL,
+    import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+  );
+
+  const loadingEl  = document.getElementById('perfil-loading')!;
+  const noauthEl   = document.getElementById('perfil-noauth')!;
+  const contentEl  = document.getElementById('perfil-content')!;
+
+  async function init() {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    loadingEl.hidden = true;
+
+    if (!user) {
+      noauthEl.hidden = false;
+      document.getElementById('perfil-login-trigger')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.getElementById('options-open-btn')?.click();
+      });
+      return;
+    }
+
+    contentEl.hidden = false;
+
+    // Fill profile info
+    const name = user.user_metadata?.display_name || user.user_metadata?.full_name
+      || user.email?.split('@')[0] || 'Usuario';
+    const initial = name.charAt(0).toUpperCase();
+
+    const avatarEl  = document.getElementById('perfil-avatar');
+    const nameEl    = document.getElementById('perfil-name');
+    const emailEl   = document.getElementById('perfil-email');
+    if (avatarEl) avatarEl.textContent = initial;
+    if (nameEl)   nameEl.textContent   = name;
+    if (emailEl)  emailEl.textContent  = user.email || '';
+
+    // Load favorites
+    try {
+      const { data: favs } = await supabase
+        .from('favoritos')
+        .select(`
+          cancion_id,
+          canciones (id, titulo, slug, letra, tono,
+            artistas (nombre),
+            categorias (nombre))
+        `)
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      const countEl = document.getElementById('perfil-fav-count');
+      const grid    = document.getElementById('perfil-favs-grid');
+      if (!favs || favs.length === 0 || !grid) return;
+
+      if (countEl) countEl.textContent = String(favs.length);
+
+      const cards = favs.map((f: any, i: number) => {
+        const c = f.canciones;
+        if (!c) return '';
+        const preview = (c.letra?.split('\n').find((l: string) => l.trim()) ?? '').replace(/</g, '&lt;');
+        return `
+          <div class="song-card-wrap">
+            <a href="/cancion/${c.slug}" class="song-card" style="animation-delay:${i * 0.04}s">
+              <span class="card-badge">✦ ${c.categorias?.nombre ?? ''}</span>
+              <h2 class="card-title">${c.titulo}</h2>
+              <p class="card-artist">${c.artistas?.nombre ?? ''}</p>
+              <p class="card-preview">${preview}</p>
+              <div class="card-meta">
+                ${c.tono ? `<span class="card-tono">${c.tono}</span>` : ''}
+                <span class="card-arrow">→</span>
+              </div>
+            </a>
+            <button class="heart-btn favorito" data-heart data-id="${c.id}" title="Quitar de favoritos" aria-label="Quitar de favoritos">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </button>
+          </div>
+        `;
+      }).join('');
+
+      grid.innerHTML = cards || grid.innerHTML;
+    } catch (_) {}
+  }
+
+  init();
+</script>

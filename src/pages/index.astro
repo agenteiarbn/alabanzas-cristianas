@@ -98,16 +98,21 @@ function pageUrl(p: number) {
         }
 
         grid.innerHTML = songs.map((c, i) => `
-          <a href="/cancion/${c.slug}" class="song-card" style="animation-delay:${i * 0.05}s">
-            <span class="card-badge">✦ ${c.categorias.nombre}</span>
-            <h2 class="card-title">${c.titulo}</h2>
-            <p class="card-artist">${c.artistas.nombre}</p>
-            <p class="card-preview">${(c.letra.split('\n').find(l => l.trim()) ?? '').replace(/</g,'&lt;')}</p>
-            <div class="card-meta">
-              ${c.tono ? `<span class="card-tono">${c.tono}</span>` : ''}
-              <span class="card-arrow">→</span>
-            </div>
-          </a>
+          <div class="song-card-wrap">
+            <a href="/cancion/${c.slug}" class="song-card" style="animation-delay:${i * 0.05}s">
+              <span class="card-badge">✦ ${c.categorias.nombre}</span>
+              <h2 class="card-title">${c.titulo}</h2>
+              <p class="card-artist">${c.artistas.nombre}</p>
+              <p class="card-preview">${(c.letra.split('\n').find(l => l.trim()) ?? '').replace(/</g,'&lt;')}</p>
+              <div class="card-meta">
+                ${c.tono ? `<span class="card-tono">${c.tono}</span>` : ''}
+                <span class="card-arrow">→</span>
+              </div>
+            </a>
+            <button class="heart-btn" data-heart data-id="${c.id}" title="Guardar en favoritos" aria-label="Guardar en favoritos">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </button>
+          </div>
         `).join('');
       } catch {}
     }, 300);

@@ -44,66 +44,136 @@ const currentQ   = url.searchParams.get("q") ?? "";
   <body>
     <div class="bg-scene" aria-hidden="true"></div>
 
-    <!-- ── OPTIONS PANEL (derecha) ──────────────────────────── -->
-    <div class="opts-overlay" id="opts-overlay" aria-hidden="true"></div>
+    <!-- ── AUTH MODAL (centrado) ─────────────────────────────── -->
+    <div class="auth-overlay" id="auth-overlay" aria-hidden="true">
+      <div class="auth-modal" role="dialog" aria-modal="true" aria-label="Iniciar sesión">
 
-    <aside class="opts-panel" id="opts-panel" aria-label="Opciones" aria-hidden="true">
-      <div class="opts-header">
-        <span class="opts-title">Opciones</span>
-        <button class="opts-close-btn" id="opts-close-btn" aria-label="Cerrar opciones">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <path d="M18 6 6 18M6 6l12 12"/>
-          </svg>
-        </button>
-      </div>
+        <!-- Panel izquierdo decorativo -->
+        <div class="auth-left" aria-hidden="true">
+          <div class="auth-left-brand">
+            <span class="auth-left-cross">✝</span>
+            <span>Alabanzas Cristianas</span>
+          </div>
+          <h2 class="auth-left-headline">Más formas de explorar la alabanza</h2>
+          <div class="auth-left-card">
+            <span class="auth-left-badge">Nuevas funciones para ti</span>
+            <ul class="auth-left-features">
+              <li>Guarda tus canciones favoritas.</li>
+              <li>Crea listas de adoración.</li>
+              <li>Recibe sugerencias personalizadas.</li>
+            </ul>
+          </div>
+        </div>
 
-      <!-- Tarjeta login -->
-      <div class="opts-login-card">
-        <div class="opts-login-icon" aria-hidden="true">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
-          </svg>
-        </div>
-        <div class="opts-login-text">
-          <p>Inicia sesión para administrar canciones, artistas y categorías.</p>
-        </div>
-        <a href="/admin/login" class="opts-login-btn">Iniciar sesión</a>
-      </div>
-
-      <!-- Sección Pantalla -->
-      <div class="opts-section">
-        <div class="opts-section-row">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
-          </svg>
-          <span class="opts-section-label">Pantalla</span>
-        </div>
-        <div class="opts-theme-btns">
-          <button class="theme-btn" data-theme-val="auto">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-            Automático
+        <!-- Panel derecho: formularios -->
+        <div class="auth-right">
+          <button class="auth-close" id="auth-close" aria-label="Cerrar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
           </button>
-          <button class="theme-btn" data-theme-val="light">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-            Claro
-          </button>
-          <button class="theme-btn" data-theme-val="dark">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-            Oscuro
-          </button>
+
+          <!-- Vista: opciones de login -->
+          <div class="auth-view" id="auth-view-options">
+            <h2 class="auth-view-title">Iniciar sesión</h2>
+            <div class="auth-providers">
+              <button class="auth-provider-btn" id="auth-email-toggle">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                Usar correo y contraseña
+              </button>
+              <button class="auth-provider-btn auth-provider-btn--google" id="auth-google-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                Continuar con Google
+              </button>
+              <button class="auth-provider-btn auth-provider-btn--facebook" id="auth-facebook-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                Continuar con Facebook
+              </button>
+              <button class="auth-provider-btn auth-provider-btn--apple" id="auth-apple-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                Continuar con Apple
+              </button>
+            </div>
+            <p class="auth-forgot"><a href="#" id="auth-show-forgot">Olvidé mi contraseña</a></p>
+            <p class="auth-switch">¿No tienes una cuenta? <a href="#" id="auth-show-register">Regístrate</a></p>
+          </div>
+
+          <!-- Vista: login con correo -->
+          <div class="auth-view" id="auth-view-email" hidden>
+            <button class="auth-back" id="auth-back-from-email">← Otras opciones</button>
+            <h2 class="auth-view-title">Iniciar sesión</h2>
+            <form class="auth-form" id="auth-login-form" novalidate>
+              <div class="auth-field">
+                <label for="login-email">Correo electrónico</label>
+                <input id="login-email" name="email" type="email" autocomplete="email" required placeholder="tu@correo.com" />
+              </div>
+              <div class="auth-field">
+                <label for="login-password">Contraseña</label>
+                <input id="login-password" name="password" type="password" autocomplete="current-password" required placeholder="••••••••" />
+              </div>
+              <p class="auth-msg auth-msg--error" id="login-error" hidden></p>
+              <button type="submit" class="auth-submit" id="login-submit">Entrar</button>
+            </form>
+            <p class="auth-switch">¿No tienes una cuenta? <a href="#" id="auth-email-to-register">Regístrate</a></p>
+          </div>
+
+          <!-- Vista: registro -->
+          <div class="auth-view" id="auth-view-register" hidden>
+            <button class="auth-back" id="auth-back-from-register">← Iniciar sesión</button>
+            <h2 class="auth-view-title">Crear cuenta</h2>
+            <form class="auth-form" id="auth-register-form" novalidate>
+              <div class="auth-field">
+                <label for="reg-name">Nombre</label>
+                <input id="reg-name" name="name" type="text" autocomplete="name" required placeholder="Tu nombre" />
+              </div>
+              <div class="auth-field">
+                <label for="reg-email">Correo electrónico</label>
+                <input id="reg-email" name="email" type="email" autocomplete="email" required placeholder="tu@correo.com" />
+              </div>
+              <div class="auth-field">
+                <label for="reg-password">Contraseña</label>
+                <input id="reg-password" name="password" type="password" autocomplete="new-password" required placeholder="Mínimo 6 caracteres" />
+              </div>
+              <p class="auth-msg auth-msg--error" id="register-error" hidden></p>
+              <p class="auth-msg auth-msg--success" id="register-success" hidden>¡Cuenta creada! Revisa tu correo para confirmarla.</p>
+              <button type="submit" class="auth-submit" id="register-submit">Crear cuenta</button>
+            </form>
+          </div>
+
+          <!-- Vista: recuperar contraseña -->
+          <div class="auth-view" id="auth-view-forgot" hidden>
+            <button class="auth-back" id="auth-back-from-forgot">← Iniciar sesión</button>
+            <h2 class="auth-view-title">Recuperar contraseña</h2>
+            <p class="auth-view-desc">Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña.</p>
+            <form class="auth-form" id="auth-forgot-form" novalidate>
+              <div class="auth-field">
+                <label for="forgot-email">Correo electrónico</label>
+                <input id="forgot-email" name="email" type="email" required placeholder="tu@correo.com" />
+              </div>
+              <p class="auth-msg auth-msg--error" id="forgot-error" hidden></p>
+              <p class="auth-msg auth-msg--success" id="forgot-success" hidden>Revisa tu correo para el enlace de recuperación.</p>
+              <button type="submit" class="auth-submit" id="forgot-submit">Enviar enlace</button>
+            </form>
+          </div>
+
+          <!-- Vista: sesión activa (perfil) -->
+          <div class="auth-view" id="auth-view-profile" hidden>
+            <div class="auth-user-avatar" id="auth-user-avatar">U</div>
+            <h2 class="auth-user-name" id="auth-user-name">Usuario</h2>
+            <p class="auth-user-email" id="auth-user-email">—</p>
+            <div class="auth-user-actions">
+              <a href="/perfil" class="auth-profile-link">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                Ver mi perfil
+              </a>
+              <button class="auth-logout-btn" id="auth-logout-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+                Cerrar sesión
+              </button>
+            </div>
+          </div>
+
         </div>
       </div>
-
-      <!-- Sección Agregar canción -->
-      <div class="opts-section opts-section--link">
-        <a href="/admin/login" class="opts-action-link">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-            <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
-          </svg>
-          Agregar letras y más
-        </a>
-      </div>
-    </aside>
+    </div>
 
     <!-- ── SLIDE-OUT MENU PANEL ──────────────────────────────── -->
     <div class="menu-overlay" id="menu-overlay" aria-hidden="true"></div>
@@ -347,61 +417,247 @@ const currentQ   = url.searchParams.get("q") ?? "";
     </footer>
 
     <script>
-      // ── Menu panel ──────────────────────────────────────────
-      const openBtn  = document.getElementById('menu-open-btn');
-      const closeBtn = document.getElementById('menu-close-btn');
-      const overlay  = document.getElementById('menu-overlay');
-      const panel    = document.getElementById('menu-panel');
+      import { createClient } from '@supabase/supabase-js';
+
+      // ── Supabase ─────────────────────────────────────────────
+      const supabase = createClient(
+        import.meta.env.PUBLIC_SUPABASE_URL,
+        import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+      );
+
+      // ── Menu panel (izquierda) ───────────────────────────────
+      const menuOpenBtn  = document.getElementById('menu-open-btn');
+      const menuCloseBtn = document.getElementById('menu-close-btn');
+      const menuOverlay  = document.getElementById('menu-overlay');
+      const menuPanel    = document.getElementById('menu-panel');
 
       function openMenu() {
-        panel?.classList.add('open');
-        overlay?.classList.add('open');
-        panel?.setAttribute('aria-hidden', 'false');
-        overlay?.setAttribute('aria-hidden', 'false');
-        openBtn?.setAttribute('aria-expanded', 'true');
+        menuPanel?.classList.add('open');
+        menuOverlay?.classList.add('open');
+        menuPanel?.setAttribute('aria-hidden', 'false');
+        menuOverlay?.setAttribute('aria-hidden', 'false');
+        menuOpenBtn?.setAttribute('aria-expanded', 'true');
         document.body.style.overflow = 'hidden';
       }
       function closeMenu() {
-        panel?.classList.remove('open');
-        overlay?.classList.remove('open');
-        panel?.setAttribute('aria-hidden', 'true');
-        overlay?.setAttribute('aria-hidden', 'true');
-        openBtn?.setAttribute('aria-expanded', 'false');
+        menuPanel?.classList.remove('open');
+        menuOverlay?.classList.remove('open');
+        menuPanel?.setAttribute('aria-hidden', 'true');
+        menuOverlay?.setAttribute('aria-hidden', 'true');
+        menuOpenBtn?.setAttribute('aria-expanded', 'false');
         document.body.style.overflow = '';
       }
+      menuOpenBtn?.addEventListener('click', openMenu);
+      menuCloseBtn?.addEventListener('click', closeMenu);
+      menuOverlay?.addEventListener('click', closeMenu);
 
-      openBtn?.addEventListener('click', openMenu);
-      closeBtn?.addEventListener('click', closeMenu);
-      overlay?.addEventListener('click', closeMenu);
-      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeMenu(); closeOpts(); } });
+      // ── Auth modal ───────────────────────────────────────────
+      const authOverlay = document.getElementById('auth-overlay');
+      const authClose   = document.getElementById('auth-close');
+      const optsBtn     = document.getElementById('options-open-btn');
 
-      // ── Options panel (derecha) ─────────────────────────────
-      const optsOpenBtn  = document.getElementById('options-open-btn');
-      const optsCloseBtn = document.getElementById('opts-close-btn');
-      const optsOverlay  = document.getElementById('opts-overlay');
-      const optsPanel    = document.getElementById('opts-panel');
-
-      function openOpts() {
-        optsPanel?.classList.add('open');
-        optsOverlay?.classList.add('open');
-        optsPanel?.setAttribute('aria-hidden', 'false');
-        optsOverlay?.setAttribute('aria-hidden', 'false');
+      async function openAuth() {
+        const { data: { user } } = await supabase.auth.getUser();
+        showView(user ? 'auth-view-profile' : 'auth-view-options');
+        authOverlay?.classList.add('open');
+        authOverlay?.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
       }
-      function closeOpts() {
-        optsPanel?.classList.remove('open');
-        optsOverlay?.classList.remove('open');
-        optsPanel?.setAttribute('aria-hidden', 'true');
-        optsOverlay?.setAttribute('aria-hidden', 'true');
+      function closeAuth() {
+        authOverlay?.classList.remove('open');
+        authOverlay?.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
       }
 
-      optsOpenBtn?.addEventListener('click', openOpts);
-      optsCloseBtn?.addEventListener('click', closeOpts);
-      optsOverlay?.addEventListener('click', closeOpts);
+      optsBtn?.addEventListener('click', openAuth);
+      authClose?.addEventListener('click', closeAuth);
+      authOverlay?.addEventListener('click', (e) => { if (e.target === authOverlay) closeAuth(); });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeMenu(); closeAuth(); } });
 
-      // ── Theme switcher ──────────────────────────────────────
-      const root = document.documentElement;
+      // ── View switching ───────────────────────────────────────
+      function showView(id: string) {
+        document.querySelectorAll<HTMLDivElement>('.auth-view').forEach(v => {
+          v.hidden = v.id !== id;
+        });
+      }
+
+      document.getElementById('auth-email-toggle')?.addEventListener('click', () => showView('auth-view-email'));
+      document.getElementById('auth-back-from-email')?.addEventListener('click', () => showView('auth-view-options'));
+      document.getElementById('auth-show-register')?.addEventListener('click', (e) => { e.preventDefault(); showView('auth-view-register'); });
+      document.getElementById('auth-email-to-register')?.addEventListener('click', (e) => { e.preventDefault(); showView('auth-view-register'); });
+      document.getElementById('auth-back-from-register')?.addEventListener('click', () => showView('auth-view-options'));
+      document.getElementById('auth-show-forgot')?.addEventListener('click', (e) => { e.preventDefault(); showView('auth-view-forgot'); });
+      document.getElementById('auth-back-from-forgot')?.addEventListener('click', () => showView('auth-view-options'));
+
+      // ── OAuth ────────────────────────────────────────────────
+      async function signInWith(provider: 'google' | 'facebook' | 'apple') {
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider,
+          options: { redirectTo: window.location.origin }
+        });
+        if (error) console.error(error.message);
+      }
+      document.getElementById('auth-google-btn')?.addEventListener('click', () => signInWith('google'));
+      document.getElementById('auth-facebook-btn')?.addEventListener('click', () => signInWith('facebook'));
+      document.getElementById('auth-apple-btn')?.addEventListener('click', () => signInWith('apple'));
+
+      // ── Email login ──────────────────────────────────────────
+      const loginForm = document.getElementById('auth-login-form') as HTMLFormElement;
+      loginForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const submit  = document.getElementById('login-submit') as HTMLButtonElement;
+        const errorEl = document.getElementById('login-error');
+        const email    = (document.getElementById('login-email') as HTMLInputElement).value;
+        const password = (document.getElementById('login-password') as HTMLInputElement).value;
+        submit.disabled = true;
+        submit.textContent = 'Entrando…';
+        if (errorEl) errorEl.hidden = true;
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          if (errorEl) { errorEl.textContent = 'Correo o contraseña incorrectos.'; errorEl.hidden = false; }
+          submit.disabled = false; submit.textContent = 'Entrar';
+        } else { closeAuth(); window.location.reload(); }
+      });
+
+      // ── Register ─────────────────────────────────────────────
+      const registerForm = document.getElementById('auth-register-form') as HTMLFormElement;
+      registerForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const submit    = document.getElementById('register-submit') as HTMLButtonElement;
+        const errorEl   = document.getElementById('register-error');
+        const successEl = document.getElementById('register-success');
+        const name      = (document.getElementById('reg-name') as HTMLInputElement).value.trim();
+        const email     = (document.getElementById('reg-email') as HTMLInputElement).value;
+        const password  = (document.getElementById('reg-password') as HTMLInputElement).value;
+        submit.disabled = true; submit.textContent = 'Creando cuenta…';
+        if (errorEl) errorEl.hidden = true;
+        if (successEl) successEl.hidden = true;
+        const { error } = await supabase.auth.signUp({
+          email, password,
+          options: { data: { full_name: name, display_name: name } }
+        });
+        if (error) {
+          if (errorEl) { errorEl.textContent = error.message; errorEl.hidden = false; }
+          submit.disabled = false; submit.textContent = 'Crear cuenta';
+        } else {
+          if (successEl) successEl.hidden = false;
+          submit.textContent = '¡Revisa tu correo!';
+        }
+      });
+
+      // ── Forgot password ──────────────────────────────────────
+      const forgotForm = document.getElementById('auth-forgot-form') as HTMLFormElement;
+      forgotForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const submit    = document.getElementById('forgot-submit') as HTMLButtonElement;
+        const errorEl   = document.getElementById('forgot-error');
+        const successEl = document.getElementById('forgot-success');
+        const email     = (document.getElementById('forgot-email') as HTMLInputElement).value;
+        submit.disabled = true;
+        if (errorEl) errorEl.hidden = true;
+        if (successEl) successEl.hidden = true;
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin + '/perfil'
+        });
+        if (error) {
+          if (errorEl) { errorEl.textContent = error.message; errorEl.hidden = false; }
+          submit.disabled = false;
+        } else {
+          if (successEl) successEl.hidden = false;
+          submit.textContent = '¡Enviado!';
+        }
+      });
+
+      // ── Logout ───────────────────────────────────────────────
+      document.getElementById('auth-logout-btn')?.addEventListener('click', async () => {
+        await supabase.auth.signOut();
+        closeAuth();
+        window.location.reload();
+      });
+
+      // ── Update UI based on auth state ────────────────────────
+      function updateHeaderBtn(user: any) {
+        const labelEl = document.querySelector<HTMLElement>('.options-btn-label');
+        if (!labelEl) return;
+        if (user) {
+          const name = user.user_metadata?.display_name || user.user_metadata?.full_name
+            || user.email?.split('@')[0] || 'Perfil';
+          labelEl.textContent = name.split(' ')[0];
+        } else {
+          labelEl.textContent = 'Iniciar sesión';
+        }
+      }
+
+      function updateProfileView(user: any) {
+        const name = user.user_metadata?.display_name || user.user_metadata?.full_name
+          || user.email?.split('@')[0] || 'Usuario';
+        const initial = name.charAt(0).toUpperCase();
+        const avatarEl = document.getElementById('auth-user-avatar');
+        const nameEl   = document.getElementById('auth-user-name');
+        const emailEl  = document.getElementById('auth-user-email');
+        if (avatarEl) avatarEl.textContent = initial;
+        if (nameEl)   nameEl.textContent   = name;
+        if (emailEl)  emailEl.textContent  = user.email || '';
+      }
+
+      supabase.auth.onAuthStateChange((_event, session) => {
+        const user = session?.user ?? null;
+        updateHeaderBtn(user);
+        if (user) { updateProfileView(user); loadFavorites(); }
+      });
+
+      supabase.auth.getUser().then(({ data: { user } }) => {
+        updateHeaderBtn(user);
+        if (user) { updateProfileView(user); loadFavorites(); }
+      });
+
+      // ── Favorites ────────────────────────────────────────────
+      let favIds = new Set<number>();
+
+      async function loadFavorites() {
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          if (!user) return;
+          const { data } = await supabase
+            .from('favoritos')
+            .select('cancion_id')
+            .eq('user_id', user.id);
+          if (!data) return;
+          favIds = new Set(data.map((f: any) => Number(f.cancion_id)));
+          document.querySelectorAll<HTMLElement>('[data-heart]').forEach(btn => {
+            const id = Number(btn.dataset.id);
+            const isFav = favIds.has(id);
+            btn.classList.toggle('favorito', isFav);
+            btn.setAttribute('title', isFav ? 'Quitar de favoritos' : 'Guardar en favoritos');
+          });
+        } catch (_) {}
+      }
+
+      document.addEventListener('click', async (e) => {
+        const btn = (e.target as Element)?.closest<HTMLElement>('[data-heart]');
+        if (!btn) return;
+        e.preventDefault();
+        e.stopPropagation();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) { showView('auth-view-options'); openAuth(); return; }
+        const cancionId = Number(btn.dataset.id);
+        const isFav = favIds.has(cancionId);
+        try {
+          if (isFav) {
+            await supabase.from('favoritos').delete()
+              .eq('user_id', user.id).eq('cancion_id', cancionId);
+            favIds.delete(cancionId);
+          } else {
+            await supabase.from('favoritos').insert({ user_id: user.id, cancion_id: cancionId });
+            favIds.add(cancionId);
+          }
+          btn.classList.toggle('favorito', !isFav);
+          btn.setAttribute('title', !isFav ? 'Quitar de favoritos' : 'Guardar en favoritos');
+        } catch (_) {}
+      });
+
+      // ── Theme switcher ───────────────────────────────────────
+      const root  = document.documentElement;
       const saved = localStorage.getItem('theme') || 'auto';
 
       function applyTheme(t: string) {
@@ -432,7 +688,6 @@ const currentQ   = url.searchParams.get("q") ?? "";
         });
       });
 
-      // Seguir cambios del sistema cuando está en "auto"
       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
         if ((localStorage.getItem('theme') || 'auto') === 'auto') applyTheme('auto');
       });
