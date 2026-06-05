@@ -1,0 +1,39 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getArtistas } from "../../lib/supabase";
+
+const artistas = await getArtistas();
+---
+
+<Layout
+  title="Artistas — Alabanzas Cristianas"
+  description="Todos los artistas e intérpretes de alabanza y adoración cristiana en español."
+>
+  <div class="container">
+    <header class="site-header">
+      <div class="eyebrow">✦ ✝ ✦</div>
+      <h1>Artistas</h1>
+      <p class="tagline">Intérpretes de alabanza y adoración</p>
+      <div class="gold-rule"></div>
+    </header>
+
+    {artistas.length === 0 ? (
+      <p class="artists-empty">No hay artistas registrados aún.</p>
+    ) : (
+      <div class="artists-grid">
+        {artistas.map((a) => (
+          <a href={`/artistas/${a.slug}`} class="artist-card">
+            <div class="artist-card-avatar">{a.nombre.charAt(0).toUpperCase()}</div>
+            <div class="artist-card-info">
+              <h2 class="artist-card-name">{a.nombre}</h2>
+              {a.pais && <p class="artist-card-country">{a.pais}</p>}
+              <p class="artist-card-count">
+                {a.total_canciones} {a.total_canciones === 1 ? "canción" : "canciones"}
+              </p>
+            </div>
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+</Layout>

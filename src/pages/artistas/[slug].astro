@@ -1,0 +1,44 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import SongCard from "../../components/SongCard.astro";
+import { getArtistaBySlug, getCancionesByArtista } from "../../lib/supabase";
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect("/artistas");
+
+const artista = await getArtistaBySlug(slug);
+if (!artista) return Astro.redirect("/artistas");
+
+const canciones = await getCancionesByArtista(artista.id);
+const initial = artista.nombre.charAt(0).toUpperCase();
+---
+
+<Layout
+  title={`${artista.nombre} — Alabanzas Cristianas`}
+  description={`Letras de canciones de ${artista.nombre}. ${canciones.length} canciones de alabanza y adoración.`}
+>
+  <div class="container">
+    <a href="/artistas" class="back-link">← Todos los artistas</a>
+
+    <div class="artist-hero">
+      <div class="artist-hero-avatar">{initial}</div>
+      <div class="artist-hero-info">
+        <h1 class="artist-hero-name">{artista.nombre}</h1>
+        {artista.pais && <p class="artist-hero-country">{artista.pais}</p>}
+        <p class="artist-hero-count">
+          {canciones.length} {canciones.length === 1 ? "canción" : "canciones"}
+        </p>
+      </div>
+    </div>
+
+    {canciones.length === 0 ? (
+      <p class="artists-empty">No hay canciones publicadas de este artista.</p>
+    ) : (
+      <div class="songs-grid">
+        {canciones.map((c, i) => (
+          <SongCard cancion={c} index={i} />
+        ))}
+      </div>
+    )}
+  </div>
+</Layout>

@@ -127,3 +127,55 @@ export async function getCategorias(): Promise<Categoria[]> {
   if (error) throw error;
   return data as Categoria[];
 }
+
+/** Todos los artistas con conteo de canciones publicadas */
+export async function getArtistas(): Promise<(Artista & { total_canciones: number })[]> {
+  const { data, error } = await supabase
+    .from("artistas")
+    .select("id, nombre, slug, pais")
+    .order("nombre");
+  if (error) throw error;
+
+  // conteo de canciones por artista
+  const { data: counts } = await supabase
+    .from("canciones")
+    .select("artista_id")
+    .eq("publicada", true);
+
+  const countMap: Record<number, number> = {};
+  for (const c of counts ?? []) {
+    countMap[c.artista_id] = (countMap[c.artista_id] ?? 0) + 1;
+  }
+
+  return (data as Artista[]).map((a) => ({
+    ...a,
+    total_canciones: countMap[a.id] ?? 0,
+  }));
+}
+
+/** Un artista por su slug */
+export async function getArtistaBySlug(slug: string): Promise<Artista | null> {
+  const { data, error } = await supabase
+    .from("artistas")
+    .select("id, nombre, slug, pais")
+    .eq("slug", slug)
+    .single();
+  if (error) return null;
+  return data as Artista;
+}
+
+/** Canciones de un artista */
+export async function getCancionesByArtista(artistaId: number): Promise<Cancion[]> {
+  const { data, error } = await supabase
+    .from("canciones")
+    .select(`
+      id, titulo, slug, anio, tono, letra, youtube_url,
+      artistas (id, nombre, slug, pais),
+      categorias (id, nombre, slug, color)
+    `)
+    .eq("publicada", true)
+    .eq("artista_id", artistaId)
+    .order("titulo", { ascending: true });
+  if (error) throw error;
+  return data as unknown as Cancion[];
+}
