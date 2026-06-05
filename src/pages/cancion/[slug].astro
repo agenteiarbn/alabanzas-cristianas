@@ -3,14 +3,11 @@ import Layout from "../../layouts/Layout.astro";
 import { getCancion } from "../../lib/supabase";
 
 const { slug } = Astro.params;
-
 if (!slug) return Astro.redirect("/");
 
 const cancion = await getCancion(slug);
-
 if (!cancion) return Astro.redirect("/");
 
-// Extraer ID de YouTube si existe
 function youtubeId(url: string | null): string | null {
   if (!url) return null;
   const m = url.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
@@ -18,6 +15,8 @@ function youtubeId(url: string | null): string | null {
 }
 
 const ytId = youtubeId(cancion.youtube_url);
+
+const artistInitial = cancion.artistas.nombre.charAt(0).toUpperCase();
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -35,36 +34,52 @@ const jsonLd = {
   description={`Letra de "${cancion.titulo}" por ${cancion.artistas.nombre}. ${cancion.letra.split('\n').find(l => l.trim()) ?? ''}`}
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} slot="head" />
+
   <div class="container">
-    <div class="song-detail">
+    <a href="/" class="back-link">← Volver al catálogo</a>
 
-      <!-- BACK -->
-      <a href="/" class="back-link">← Volver al catálogo</a>
-
-      <!-- HEADER -->
-      <div class="song-detail-header">
-        <p class="detail-cat">✦ {cancion.categorias.nombre}</p>
+    <!-- ── SONG META HEADER ── -->
+    <div class="song-meta-header">
+      <div class="artist-thumb" aria-hidden="true">
+        <span class="artist-thumb-initial">{artistInitial}</span>
+      </div>
+      <div class="song-meta-info">
         <h1 class="detail-title">{cancion.titulo}</h1>
         <p class="detail-artist">{cancion.artistas.nombre}</p>
+      </div>
+      <div class="song-meta-right">
+        <span class="detail-cat-label">categoría</span>
+        <span class="detail-cat-value">✦ {cancion.categorias.nombre}</span>
+      </div>
+    </div>
 
-        <div class="gold-rule" style="margin: 1rem 0;"></div>
+    <!-- ── TABS ── -->
+    <div class="song-tabs">
+      <span class="song-tab song-tab--active">Letra</span>
+      {cancion.tono  && <span class="song-tab">Tono: {cancion.tono}</span>}
+      {cancion.anio  && <span class="song-tab">{cancion.anio}</span>}
+      {cancion.artistas.pais && <span class="song-tab">{cancion.artistas.pais}</span>}
+    </div>
 
-        <div class="detail-tags">
-          {cancion.anio  && <span class="tag">{cancion.anio}</span>}
-          {cancion.tono  && <span class="tag">Tono: {cancion.tono}</span>}
-          {cancion.artistas.pais && <span class="tag">{cancion.artistas.pais}</span>}
-        </div>
+    <!-- ── 2-COLUMN LAYOUT ── -->
+    <div class={`song-layout${ytId ? "" : " song-layout--no-sidebar"}`}>
+
+      <!-- Left actions bar -->
+      <div class="left-actions" aria-hidden="true">
+        <button class="action-icon" title="Favorito">♡</button>
+        <button class="action-icon" title="Compartir">↗</button>
+        <button class="action-icon" title="Imprimir">⊞</button>
       </div>
 
-      <!-- LETRA -->
+      <!-- Lyrics -->
       <div class="lyrics-block" aria-label="Letra de la canción">
         {cancion.letra}
       </div>
 
-      <!-- YOUTUBE (opcional) -->
+      <!-- Right sidebar: video -->
       {ytId && (
-        <div class="youtube-embed">
-          <h3>▶ Escuchar canción</h3>
+        <aside class="song-sidebar">
+          <p class="sidebar-label">▶ Escuchar</p>
           <iframe
             src={`https://www.youtube.com/embed/${ytId}`}
             title={`${cancion.titulo} — ${cancion.artistas.nombre}`}
@@ -72,9 +87,8 @@ const jsonLd = {
             allowfullscreen
             loading="lazy"
           ></iframe>
-        </div>
+        </aside>
       )}
-
     </div>
   </div>
 </Layout>
