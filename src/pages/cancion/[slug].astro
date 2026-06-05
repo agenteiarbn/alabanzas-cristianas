@@ -30,7 +30,7 @@ const jsonLd = {
 ---
 
 <Layout
-  title={`${cancion.titulo} — ${cancion.artistas.nombre} | Alabanzas Cristinas`}
+  title={`${cancion.titulo} — ${cancion.artistas.nombre} | Alabanzas Cristianas`}
   description={`Letra de "${cancion.titulo}" por ${cancion.artistas.nombre}. ${cancion.letra.split('\n').find(l => l.trim()) ?? ''}`}
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} slot="head" />
