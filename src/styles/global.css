@@ -323,6 +323,127 @@ a:hover { color: var(--gold-light); }
 .opts-action-link:hover { color: var(--gold-light); }
 .opts-action-link svg { opacity: .7; }
 
+/* Login row layout */
+.opts-login-row {
+  display: flex;
+  align-items: flex-start;
+  gap: .85rem;
+}
+.opts-login-text {
+  font-size: .95rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* User card (logged in) */
+.opts-user-card {
+  margin: 1.25rem;
+  background: rgba(212,175,95,.07);
+  border: 1px solid rgba(212,175,95,.18);
+  border-radius: 12px;
+  padding: 1.1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.opts-user-avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+  color: #0a0d1a;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.opts-user-info { flex: 1; min-width: 0; }
+.opts-user-name {
+  font-family: var(--font-title);
+  font-size: .9rem;
+  color: var(--text);
+  font-weight: 600;
+  margin-bottom: .2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.opts-user-link { font-size: .82rem; color: var(--gold); text-decoration: none; }
+.opts-user-link:hover { color: var(--gold-light); }
+
+/* Subscription card */
+.opts-subs-card {
+  margin: 0 1.25rem 1.25rem;
+  background: linear-gradient(135deg, rgba(212,175,95,.15) 0%, rgba(212,175,95,.07) 100%);
+  border: 1px solid rgba(212,175,95,.28);
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.opts-subs-body { flex: 1; min-width: 0; }
+.opts-subs-title {
+  font-family: var(--font-title);
+  font-size: .82rem;
+  letter-spacing: .04em;
+  color: var(--gold-light);
+  margin-bottom: .35rem;
+  font-weight: 600;
+}
+.opts-subs-desc {
+  font-size: .85rem;
+  color: var(--text-muted);
+  margin-bottom: .85rem;
+  line-height: 1.4;
+}
+.opts-subs-btn {
+  display: inline-block;
+  background: var(--gold);
+  color: #0a0d1a;
+  font-family: var(--font-title);
+  font-size: .65rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: .55rem 1.1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background .2s;
+}
+.opts-subs-btn:hover { background: var(--gold-light); color: #0a0d1a; }
+.opts-subs-deco {
+  font-size: 2.8rem;
+  opacity: .22;
+  flex-shrink: 0;
+  color: var(--gold);
+  line-height: 1;
+  user-select: none;
+}
+
+/* Individual theme buttons inside opts panel */
+.opts-theme-btn {
+  padding: .4rem .95rem;
+  border: 1px solid rgba(212,175,95,.2);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-title);
+  font-size: .63rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all .2s;
+}
+.opts-theme-btn:hover { border-color: var(--gold); color: var(--gold-light); }
+.opts-theme-btn.theme-btn--active {
+  background: rgba(212,175,95,.15);
+  border-color: var(--gold);
+  color: var(--gold-light);
+}
+
 /* ── Category pills bar ─────────────────────────────────────── */
 .cat-bar {
   border-top: 1px solid rgba(212,175,95,.07);
@@ -1278,6 +1399,23 @@ a:hover { color: var(--gold-light); }
   border-color: rgba(201,150,58,.3);
 }
 [data-theme="light"] .opts-section { border-top-color: rgba(160,120,40,.08); }
+[data-theme="light"] .opts-login-text { color: #63502a; }
+[data-theme="light"] .opts-user-card { background: rgba(201,150,58,.06); border-color: rgba(201,150,58,.2); }
+[data-theme="light"] .opts-user-name { color: #1c1408; }
+[data-theme="light"] .opts-subs-card {
+  background: linear-gradient(135deg, rgba(201,150,58,.12) 0%, rgba(201,150,58,.05) 100%);
+  border-color: rgba(201,150,58,.3);
+}
+[data-theme="light"] .opts-subs-title { color: #7a5010; }
+[data-theme="light"] .opts-subs-desc { color: #63502a; }
+[data-theme="light"] .opts-subs-btn { background: #c9963a; color: #fff; }
+[data-theme="light"] .opts-subs-btn:hover { background: #a07820; }
+[data-theme="light"] .opts-theme-btn { border-color: rgba(160,120,40,.2); color: #63502a; }
+[data-theme="light"] .opts-theme-btn:hover { border-color: #c9963a; color: #a07020; }
+[data-theme="light"] .opts-theme-btn.theme-btn--active { background: rgba(201,150,58,.12); border-color: #c9963a; color: #a07020; }
+[data-theme="light"] .opts-action-link { color: #63502a; }
+[data-theme="light"] .opts-action-link:hover { color: #a07020; }
+[data-theme="light"] .opts-section-label { color: #1c1408; }
 [data-theme="light"] .footer-pantalla-opt--active {
   background: rgba(201,150,58,.12);
   border-color: rgba(201,150,58,.4);

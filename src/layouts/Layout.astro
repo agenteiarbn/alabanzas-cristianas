@@ -175,6 +175,74 @@ const currentQ   = url.searchParams.get("q") ?? "";
       </div>
     </div>
 
+    <!-- ── OPTIONS PANEL (derecha) ──────────────────────────── -->
+    <div class="opts-overlay" id="opts-overlay" aria-hidden="true"></div>
+    <aside class="opts-panel" id="opts-panel" aria-label="Opciones" aria-hidden="true">
+
+      <div class="opts-header">
+        <span class="opts-title">Opciones</span>
+        <button class="opts-close-btn" id="opts-close-btn" aria-label="Cerrar opciones">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Login card (visible cuando no hay sesión) -->
+      <div id="opts-login-section">
+        <div class="opts-login-card">
+          <div class="opts-login-row">
+            <div class="opts-login-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            </div>
+            <p class="opts-login-text">Inicia sesión para guardar tus alabanzas favoritas y recibir sugerencias personalizadas.</p>
+          </div>
+          <button class="opts-login-btn" id="opts-open-auth">Iniciar sesión o crear cuenta</button>
+        </div>
+      </div>
+
+      <!-- User card (visible cuando hay sesión activa) -->
+      <div id="opts-user-section" hidden>
+        <div class="opts-user-card">
+          <div class="opts-user-avatar" id="opts-user-avatar">U</div>
+          <div class="opts-user-info">
+            <p class="opts-user-name" id="opts-user-name">Usuario</p>
+            <a href="/perfil" class="opts-user-link">Ver mi perfil →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta de suscripción -->
+      <div class="opts-subs-card">
+        <div class="opts-subs-body">
+          <p class="opts-subs-title">Acceso completo sin límites</p>
+          <p class="opts-subs-desc">Suscríbete para desbloquear todas las funciones premium.</p>
+          <a href="/suscripcion" class="opts-subs-btn" id="opts-subs-link">Suscribirme</a>
+        </div>
+        <div class="opts-subs-deco" aria-hidden="true">✝</div>
+      </div>
+
+      <!-- Agregar letra -->
+      <div class="opts-section opts-section--link">
+        <a href="/admin/login" class="opts-action-link">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Agregar letra, traducirla y más
+        </a>
+      </div>
+
+      <!-- Pantalla / Tema -->
+      <div class="opts-section">
+        <div class="opts-section-row">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <span class="opts-section-label">Pantalla</span>
+        </div>
+        <div class="opts-theme-btns">
+          <button class="opts-theme-btn" data-theme-val="auto">Automático</button>
+          <button class="opts-theme-btn" data-theme-val="light">Claro</button>
+          <button class="opts-theme-btn" data-theme-val="dark">Oscuro</button>
+        </div>
+      </div>
+
+    </aside>
+
     <!-- ── SLIDE-OUT MENU PANEL ──────────────────────────────── -->
     <div class="menu-overlay" id="menu-overlay" aria-hidden="true"></div>
 
@@ -459,10 +527,33 @@ const currentQ   = url.searchParams.get("q") ?? "";
       menuCloseBtn?.addEventListener('click', closeMenu);
       menuOverlay?.addEventListener('click', closeMenu);
 
+      // ── Opts panel (derecha) ────────────────────────────────
+      const optsPanel   = document.getElementById('opts-panel');
+      const optsOverlay = document.getElementById('opts-overlay');
+      const optsCloseBtn = document.getElementById('opts-close-btn');
+      const optsBtn     = document.getElementById('options-open-btn');
+
+      function openOpts() {
+        optsPanel?.classList.add('open');
+        optsOverlay?.classList.add('open');
+        optsPanel?.setAttribute('aria-hidden', 'false');
+        optsOverlay?.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+      function closeOpts() {
+        optsPanel?.classList.remove('open');
+        optsOverlay?.classList.remove('open');
+        optsPanel?.setAttribute('aria-hidden', 'true');
+        optsOverlay?.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+      optsBtn?.addEventListener('click', openOpts);
+      optsCloseBtn?.addEventListener('click', closeOpts);
+      optsOverlay?.addEventListener('click', closeOpts);
+
       // ── Auth modal ───────────────────────────────────────────
       const authOverlay = document.getElementById('auth-overlay');
       const authClose   = document.getElementById('auth-close');
-      const optsBtn     = document.getElementById('options-open-btn');
 
       async function openAuth() {
         const { data: { user } } = await supabase.auth.getUser();
@@ -477,10 +568,10 @@ const currentQ   = url.searchParams.get("q") ?? "";
         document.body.style.overflow = '';
       }
 
-      optsBtn?.addEventListener('click', openAuth);
+      document.getElementById('opts-open-auth')?.addEventListener('click', () => { closeOpts(); openAuth(); });
       authClose?.addEventListener('click', closeAuth);
       authOverlay?.addEventListener('click', (e) => { if (e.target === authOverlay) closeAuth(); });
-      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeMenu(); closeAuth(); } });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeMenu(); closeOpts(); closeAuth(); } });
 
       // ── View switching ───────────────────────────────────────
       function showView(id: string) {
@@ -596,6 +687,25 @@ const currentQ   = url.searchParams.get("q") ?? "";
         }
       }
 
+      function updateOptsPanel(user: any) {
+        const loginSection = document.getElementById('opts-login-section');
+        const userSection  = document.getElementById('opts-user-section');
+        if (!loginSection || !userSection) return;
+        if (user) {
+          loginSection.hidden = true;
+          userSection.hidden  = false;
+          const name = user.user_metadata?.display_name || user.user_metadata?.full_name
+            || user.email?.split('@')[0] || 'Usuario';
+          const avatarEl = document.getElementById('opts-user-avatar');
+          const nameEl   = document.getElementById('opts-user-name');
+          if (avatarEl) avatarEl.textContent = name.charAt(0).toUpperCase();
+          if (nameEl)   nameEl.textContent   = name.split(' ')[0];
+        } else {
+          loginSection.hidden = false;
+          userSection.hidden  = true;
+        }
+      }
+
       function updateProfileView(user: any) {
         const name = user.user_metadata?.display_name || user.user_metadata?.full_name
           || user.email?.split('@')[0] || 'Usuario';
@@ -611,11 +721,13 @@ const currentQ   = url.searchParams.get("q") ?? "";
       supabase.auth.onAuthStateChange((_event, session) => {
         const user = session?.user ?? null;
         updateHeaderBtn(user);
+        updateOptsPanel(user);
         if (user) { updateProfileView(user); loadFavorites(); }
       });
 
       supabase.auth.getUser().then(({ data: { user } }) => {
         updateHeaderBtn(user);
+        updateOptsPanel(user);
         if (user) { updateProfileView(user); loadFavorites(); }
       });
 
