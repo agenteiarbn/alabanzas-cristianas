@@ -1,0 +1,40 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCategoriasConConteo } from "../../lib/supabase";
+
+const categorias = await getCategoriasConConteo();
+---
+
+<Layout
+  title="Géneros — Alabanzas Cristianas"
+  description="Explora todos los géneros de alabanza y adoración cristiana en español."
+>
+  <div class="container">
+    <header class="site-header">
+      <div class="eyebrow">✦ ✝ ✦</div>
+      <h1>Géneros</h1>
+      <p class="tagline">Explora la música de adoración por estilo</p>
+      <div class="gold-rule"></div>
+    </header>
+
+    {categorias.length === 0 ? (
+      <p class="artists-empty">No hay géneros registrados aún.</p>
+    ) : (
+      <div class="genres-grid">
+        {categorias.map((cat) => (
+          <a href={`/?cat=${cat.slug}`} class="genre-card">
+            <div class="genre-card-icon" style={`background: ${cat.color ?? 'rgba(212,175,95,.15)'}`}>
+              ✝
+            </div>
+            <div class="genre-card-info">
+              <h2 class="genre-card-name">{cat.nombre}</h2>
+              <p class="genre-card-count">
+                {cat.total_canciones} {cat.total_canciones === 1 ? "canción" : "canciones"}
+              </p>
+            </div>
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+</Layout>

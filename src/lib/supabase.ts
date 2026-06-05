@@ -128,6 +128,41 @@ export async function getCategorias(): Promise<Categoria[]> {
   return data as Categoria[];
 }
 
+/** Todas las categorías con conteo de canciones publicadas */
+export async function getCategoriasConConteo(): Promise<(Categoria & { total_canciones: number })[]> {
+  const { data, error } = await supabase
+    .from("categorias")
+    .select("*")
+    .order("nombre");
+  if (error) throw error;
+
+  const { data: counts } = await supabase
+    .from("canciones")
+    .select("categoria_id")
+    .eq("publicada", true);
+
+  const countMap: Record<number, number> = {};
+  for (const c of counts ?? []) {
+    countMap[c.categoria_id] = (countMap[c.categoria_id] ?? 0) + 1;
+  }
+
+  return (data as Categoria[]).map((cat) => ({
+    ...cat,
+    total_canciones: countMap[cat.id] ?? 0,
+  }));
+}
+
+/** Una categoría por su slug */
+export async function getCategoriaBySlug(slug: string): Promise<Categoria | null> {
+  const { data, error } = await supabase
+    .from("categorias")
+    .select("*")
+    .eq("slug", slug)
+    .single();
+  if (error) return null;
+  return data as Categoria;
+}
+
 /** Todos los artistas con conteo de canciones publicadas */
 export async function getArtistas(): Promise<(Artista & { total_canciones: number })[]> {
   const { data, error } = await supabase
