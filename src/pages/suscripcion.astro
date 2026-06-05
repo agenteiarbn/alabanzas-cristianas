@@ -1,0 +1,150 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="Suscripción Premium — Alabanzas Cristianas"
+  description="Accede a todas las funciones premium de Alabanzas Cristianas por solo $19.99 al año."
+>
+  <div class="container">
+    <div class="subs-wrap">
+
+      <!-- ── Panel izquierdo: beneficios ─────────────────── -->
+      <div class="subs-left" aria-hidden="true">
+        <div class="subs-left-brand">
+          <span class="subs-cross">✝</span>
+          <span>Alabanzas Cristianas</span>
+        </div>
+        <h1 class="subs-headline">Accede a todo<br>sin límites</h1>
+        <div class="subs-feature-card">
+          <span class="subs-badge">Plan Premium</span>
+          <ul class="subs-features">
+            <li>Sin anuncios en todo el sitio.</li>
+            <li>Favoritos y listas de adoración ilimitadas.</li>
+            <li>Descarga letras en PDF.</li>
+            <li>Notificaciones de nuevas canciones.</li>
+            <li>Apoyas el crecimiento del ministerio.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ── Panel derecho: precios (estilo login modal) ── -->
+      <div class="subs-right">
+        <a href="/" class="subs-close" aria-label="Volver al inicio">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5">
+            <path d="M18 6 6 18M6 6l12 12"/>
+          </svg>
+        </a>
+
+        <h2 class="subs-title">Plan Anual</h2>
+
+        <!-- Opción de plan (estilo botón de proveedor) -->
+        <div class="subs-plan-btn subs-plan-btn--selected" role="presentation">
+          <div class="subs-plan-icon">⭐</div>
+          <div class="subs-plan-info">
+            <span class="subs-plan-name">Premium Anual</span>
+            <span class="subs-plan-price">$19.99 <span style="font-size:.9rem;font-weight:500">/ año</span></span>
+            <span class="subs-plan-per">Solo $1.67 al mes</span>
+          </div>
+          <svg class="subs-plan-check" width="22" height="22" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+
+        <!-- Botón CTA principal -->
+        <button class="subs-cta" id="subs-btn">
+          Suscribirme — $19.99/año
+        </button>
+
+        <p class="subs-fine">Pago seguro con Stripe · Cancela cuando quieras</p>
+
+        <p class="subs-login-link" id="subs-status">
+          ¿Ya tienes suscripción?
+          <a href="#" id="subs-check-btn">Ver estado</a>
+        </p>
+
+        <div id="subs-msg"></div>
+      </div>
+
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { createClient } from '@supabase/supabase-js';
+
+  const supabase = createClient(
+    import.meta.env.PUBLIC_SUPABASE_URL,
+    import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+  );
+
+  const btn      = document.getElementById('subs-btn') as HTMLButtonElement;
+  const msgEl    = document.getElementById('subs-msg')!;
+  const statusEl = document.getElementById('subs-status')!;
+
+  function showMsg(html: string, type: 'err' | 'ok') {
+    msgEl.innerHTML = `<p class="subs-${type}">${html}</p>`;
+  }
+
+  // Check if already subscribed
+  async function checkSubscription() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data } = await supabase
+      .from('suscripciones')
+      .select('status, current_period_end')
+      .eq('user_id', user.id)
+      .eq('status', 'active')
+      .maybeSingle();
+
+    if (data) {
+      const date = new Date(data.current_period_end).toLocaleDateString('es-ES', {
+        year: 'numeric', month: 'long', day: 'numeric'
+      });
+      btn.textContent = '✓ Suscripción activa';
+      btn.disabled = true;
+      btn.style.cssText = 'background:#2a7a3a;cursor:default';
+      statusEl.textContent = `Tu plan renueva el ${date}`;
+    }
+  }
+
+  checkSubscription();
+
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    btn.textContent = 'Redirigiendo a pago seguro…';
+
+    const { data: { user } } = await supabase.auth.getUser();
+
+    try {
+      const res = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email:  user?.email  ?? null,
+          userId: user?.id     ?? null
+        })
+      });
+
+      const json = await res.json() as { url?: string; error?: string };
+
+      if (json.url) {
+        window.location.href = json.url;
+      } else {
+        throw new Error(json.error ?? 'Error desconocido');
+      }
+    } catch (err: any) {
+      showMsg(`Error: ${err.message}`, 'err');
+      btn.disabled = false;
+      btn.textContent = 'Suscribirme — $19.99/año';
+    }
+  });
+
+  document.getElementById('subs-check-btn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('options-open-btn')?.click();
+  });
+</script>
