@@ -158,36 +158,53 @@ const currentQ   = url.searchParams.get("q") ?? "";
 
     <!-- ── FOOTER ─────────────────────────────────────────── -->
     <footer class="site-footer">
-      <div class="footer-inner container">
 
-        <div class="footer-col footer-brand">
-          <p class="footer-logo"><span class="logo-cross">✝</span> Alabanzas Cristinas</p>
-          <p class="footer-tagline">Letras de canciones que elevan el alma</p>
-          <div class="gold-rule" style="margin:1rem 0;"></div>
-          <p class="footer-copy">&copy; {new Date().getFullYear()} Alabanzas Cristinas</p>
+      <!-- 3 tarjetas -->
+      <div class="footer-cards container">
+
+        <div class="footer-card">
+          <h3 class="footer-card-title">Explorar</h3>
+          <ul class="footer-card-links">
+            <li><a href="/">Canciones</a></li>
+            <li><a href="/?cat=todas">Todos los géneros</a></li>
+            {categorias.slice(0, 4).map((c) => (
+              <li><a href={`/?cat=${c.slug}`}>{c.nombre}</a></li>
+            ))}
+          </ul>
         </div>
 
-        <div class="footer-col">
-          <p class="footer-heading">Navegar</p>
-          <ul class="footer-links">
-            <li><a href="/?cat=todas">Todas las canciones</a></li>
+        <div class="footer-card">
+          <h3 class="footer-card-title">Géneros</h3>
+          <ul class="footer-card-links">
             {categorias.map((c) => (
               <li><a href={`/?cat=${c.slug}`}>{c.nombre}</a></li>
             ))}
           </ul>
         </div>
 
-        <div class="footer-col">
-          <p class="footer-heading">Acerca</p>
-          <ul class="footer-links">
+        <div class="footer-card">
+          <h3 class="footer-card-title">Sobre el sitio</h3>
+          <ul class="footer-card-links">
             <li><a href="/">Inicio</a></li>
-            <li style="color:var(--text-faint);font-style:italic;font-size:.9rem;margin-top:.5rem;">
-              Un espacio dedicado a preservar las letras de alabanzas y adoraciones en español.
+            <li><a href="/?cat=todas">Ver todas las canciones</a></li>
+            <li class="footer-card-desc">
+              Un espacio dedicado a preservar las letras de alabanzas y adoraciones en español para la comunidad cristiana.
             </li>
           </ul>
         </div>
 
       </div>
+
+      <!-- Barra inferior -->
+      <div class="footer-bottom">
+        <div class="footer-bottom-inner container">
+          <p class="footer-logo-sm">
+            <span class="logo-cross">✝</span> Alabanzas Cristinas
+          </p>
+          <p class="footer-copy">&copy; {new Date().getFullYear()} Alabanzas Cristinas — Letras de adoración en español</p>
+        </div>
+      </div>
+
     </footer>
 
     <script>
