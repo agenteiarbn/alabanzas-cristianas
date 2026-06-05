@@ -35,11 +35,80 @@ const currentQ   = url.searchParams.get("q") ?? "";
   <body>
     <div class="bg-scene" aria-hidden="true"></div>
 
+    <!-- ── SLIDE-OUT MENU PANEL ──────────────────────────────── -->
+    <div class="menu-overlay" id="menu-overlay" aria-hidden="true"></div>
+
+    <nav class="menu-panel" id="menu-panel" aria-label="Menú principal" aria-hidden="true">
+      <div class="menu-panel-header">
+        <span class="menu-panel-title">Menú</span>
+        <button class="menu-close-btn" id="menu-close-btn" aria-label="Cerrar menú">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M18 6 6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <ul class="menu-panel-nav">
+        <li>
+          <a href="/" class="menu-panel-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+            </svg>
+            Canciones
+          </a>
+        </li>
+        <li>
+          <a href="/?cat=todas" class="menu-panel-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
+              <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
+            </svg>
+            Géneros
+          </a>
+        </li>
+        <li>
+          <a href="/" class="menu-panel-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+            </svg>
+            Artistas
+          </a>
+        </li>
+        <li>
+          <a href="/" class="menu-panel-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M12 2a3 3 0 0 0-3 3v4H4l1 12h14l1-12h-5V5a3 3 0 0 0-3-3z"/>
+            </svg>
+            Adoración
+          </a>
+        </li>
+      </ul>
+
+      <div class="menu-panel-cats">
+        <p class="menu-panel-cats-title">Géneros</p>
+        <a href="/?cat=todas" class="menu-panel-cat-link"
+          aria-current={currentCat === "todas" ? "page" : undefined}>Todas</a>
+        {categorias.map((c) => (
+          <a href={`/?cat=${c.slug}`} class="menu-panel-cat-link"
+            aria-current={currentCat === c.slug ? "page" : undefined}>{c.nombre}</a>
+        ))}
+      </div>
+
+      <div class="menu-panel-footer">
+        <a href="/" class="menu-panel-cta">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+          Agregar letra
+        </a>
+      </div>
+    </nav>
+
     <!-- ── HEADER ─────────────────────────────────────────── -->
     <header class="topbar">
       <div class="topbar-inner container">
 
-        <button class="mobile-menu-btn" aria-label="Menú" aria-expanded="false">
+        <button class="mobile-menu-btn" id="menu-open-btn" aria-label="Abrir menú" aria-expanded="false">
           <span></span><span></span><span></span>
         </button>
 
@@ -79,14 +148,6 @@ const currentQ   = url.searchParams.get("q") ?? "";
               aria-current={currentCat === c.slug ? "page" : undefined}>{c.nombre}</a>
           ))}
         </div>
-      </div>
-
-      <!-- ── MOBILE NAV ─────────────────────────────────────── -->
-      <div class="mobile-nav" aria-hidden="true">
-        <a href="/?cat=todas" class="mobile-nav-link">Todas</a>
-        {categorias.map((c) => (
-          <a href={`/?cat=${c.slug}`} class="mobile-nav-link">{c.nombre}</a>
-        ))}
       </div>
     </header>
 
@@ -130,13 +191,35 @@ const currentQ   = url.searchParams.get("q") ?? "";
     </footer>
 
     <script>
-      const btn = document.querySelector('.mobile-menu-btn');
-      const nav = document.querySelector('.mobile-nav');
-      btn?.addEventListener('click', () => {
-        const open = btn.getAttribute('aria-expanded') === 'true';
-        btn.setAttribute('aria-expanded', String(!open));
-        nav?.setAttribute('aria-hidden', String(open));
-        nav?.classList.toggle('open', !open);
+      const openBtn  = document.getElementById('menu-open-btn');
+      const closeBtn = document.getElementById('menu-close-btn');
+      const overlay  = document.getElementById('menu-overlay');
+      const panel    = document.getElementById('menu-panel');
+
+      function openMenu() {
+        panel?.classList.add('open');
+        overlay?.classList.add('open');
+        panel?.setAttribute('aria-hidden', 'false');
+        overlay?.setAttribute('aria-hidden', 'false');
+        openBtn?.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeMenu() {
+        panel?.classList.remove('open');
+        overlay?.classList.remove('open');
+        panel?.setAttribute('aria-hidden', 'true');
+        overlay?.setAttribute('aria-hidden', 'true');
+        openBtn?.setAttribute('aria-expanded', 'false');
+        document.body.style.overflow = '';
+      }
+
+      openBtn?.addEventListener('click', openMenu);
+      closeBtn?.addEventListener('click', closeMenu);
+      overlay?.addEventListener('click', closeMenu);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeMenu();
       });
     </script>
   </body>
