@@ -1,0 +1,133 @@
+---
+import { getArtistas, getCategoriasAdmin } from "../../../lib/supabase-admin";
+
+const token = Astro.locals.token!;
+const [artistas, categorias] = await Promise.all([
+  getArtistas(token),
+  getCategoriasAdmin(token),
+]);
+const error = Astro.url.searchParams.get("error");
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nueva canción — Admin</title>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      body { background: #0d0d0d; color: #e8dcc8; font-family: Georgia, serif; padding: 2rem; max-width: 760px; margin: 0 auto; }
+      .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+      h1 { font-size: 1.4rem; color: #d4af5f; }
+      .btn { padding: .5rem 1.1rem; background: #d4af5f; border: none; border-radius: 4px; color: #0d0d0d; font-weight: bold; cursor: pointer; text-decoration: none; font-size: .9rem; }
+      .btn:hover { background: #e8c870; }
+      .btn-ghost { background: transparent; border: 1px solid #3a2e1e; color: #a89060; }
+      .btn-ghost:hover { border-color: #d4af5f; color: #d4af5f; background: transparent; }
+      .error { margin-bottom: 1.25rem; padding: .65rem 1rem; background: #3a1010; border: 1px solid #8b2020; border-radius: 4px; font-size: .875rem; color: #f08080; }
+      .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem; }
+      .field { display: flex; flex-direction: column; gap: .35rem; margin-bottom: 1.25rem; }
+      label { font-size: .85rem; color: #a89060; }
+      input, select, textarea { background: #111; border: 1px solid #3a2e1e; border-radius: 4px; color: #e8dcc8; font-size: .95rem; padding: .6rem .85rem; font-family: inherit; width: 100%; }
+      input:focus, select:focus, textarea:focus { outline: none; border-color: #d4af5f; }
+      textarea { resize: vertical; min-height: 220px; line-height: 1.6; }
+      .check-row { display: flex; align-items: center; gap: .6rem; margin-bottom: 1.5rem; }
+      .check-row input { width: auto; }
+      .submit-row { display: flex; gap: .75rem; }
+      .btn-submit { padding: .7rem 1.5rem; background: #d4af5f; border: none; border-radius: 4px; color: #0d0d0d; font-size: 1rem; font-weight: bold; cursor: pointer; }
+      .btn-submit:hover { background: #e8c870; }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <h1>Nueva canción</h1>
+      <a href="/admin" class="btn btn-ghost">← Volver</a>
+    </div>
+
+    {error && <div class="error">{error}</div>}
+
+    <form method="post" action="/api/admin/canciones">
+      <div class="row">
+        <div class="field">
+          <label for="titulo">Título *</label>
+          <input id="titulo" name="titulo" type="text" required
+            oninput="autoSlug(this.value)" />
+        </div>
+        <div class="field">
+          <label for="slug">Slug *</label>
+          <input id="slug" name="slug" type="text" required />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="artista_id">Artista *</label>
+          <select id="artista_id" name="artista_id" required>
+            <option value="">— selecciona —</option>
+            {artistas.map((a) => (
+              <option value={a.id}>{a.nombre}</option>
+            ))}
+          </select>
+        </div>
+        <div class="field">
+          <label for="categoria_id">Categoría *</label>
+          <select id="categoria_id" name="categoria_id" required>
+            <option value="">— selecciona —</option>
+            {categorias.map((c) => (
+              <option value={c.id}>{c.nombre}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="tono">Tono</label>
+          <input id="tono" name="tono" type="text" placeholder="ej. G, Am, C" />
+        </div>
+        <div class="field">
+          <label for="anio">Año</label>
+          <input id="anio" name="anio" type="number" min="1800" max="2100" placeholder="ej. 2015" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="youtube_url">URL de YouTube</label>
+        <input id="youtube_url" name="youtube_url" type="url" placeholder="https://www.youtube.com/watch?v=..." />
+      </div>
+
+      <div class="field">
+        <label for="letra">Letra *</label>
+        <textarea id="letra" name="letra" required placeholder="Escribe la letra aquí..."></textarea>
+      </div>
+
+      <div class="check-row">
+        <input id="publicada" name="publicada" type="checkbox" checked />
+        <label for="publicada">Publicar inmediatamente</label>
+      </div>
+
+      <div class="submit-row">
+        <button type="submit" class="btn-submit">Guardar canción</button>
+        <a href="/admin" class="btn btn-ghost">Cancelar</a>
+      </div>
+    </form>
+
+    <script>
+      function autoSlug(titulo) {
+        const slugInput = document.getElementById('slug');
+        if (!slugInput._edited) {
+          slugInput.value = titulo
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[̀-ͯ]/g, '')
+            .replace(/[^a-z0-9\s-]/g, '')
+            .trim()
+            .replace(/\s+/g, '-');
+        }
+      }
+      document.getElementById('slug').addEventListener('input', function() {
+        this._edited = true;
+      });
+    </script>
+  </body>
+</html>
