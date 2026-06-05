@@ -915,8 +915,10 @@ a:hover { color: var(--gold-light); }
 
 /* ── Footer ─────────────────────────────────────────────────── */
 .site-footer {
-  border-top: 1px solid rgba(212,175,95,.1);
-  background: rgba(8,10,20,.7);
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid rgba(212,175,95,.18);
+  background: #0d1022;
   margin-top: 4rem;
   padding-top: 2.5rem;
 }
@@ -929,8 +931,8 @@ a:hover { color: var(--gold-light); }
   padding: 0 1.25rem 2.5rem;
 }
 .footer-card {
-  background: rgba(20,25,48,.75);
-  border: 1px solid rgba(212,175,95,.08);
+  background: #161b35;
+  border: 1px solid rgba(212,175,95,.2);
   border-radius: 12px;
   padding: 1.6rem 1.5rem;
 }
@@ -966,7 +968,7 @@ a:hover { color: var(--gold-light); }
 
 /* ② Fila de columnas (Géneros / Comunidad / Pantalla) */
 .footer-info {
-  border-top: 1px solid rgba(212,175,95,.07);
+  border-top: 1px solid rgba(212,175,95,.12);
   padding: 2rem 0;
 }
 .footer-info-inner {
@@ -1034,7 +1036,7 @@ a:hover { color: var(--gold-light); }
 
 /* ③ Síguenos */
 .footer-social {
-  border-top: 1px solid rgba(212,175,95,.07);
+  border-top: 1px solid rgba(212,175,95,.12);
   padding: 1.75rem 0;
 }
 .footer-social-inner {
@@ -1075,8 +1077,8 @@ a:hover { color: var(--gold-light); }
 
 /* ④ Barra de copyright */
 .footer-bottom {
-  border-top: 1px solid rgba(212,175,95,.08);
-  background: rgba(6,8,16,.6);
+  border-top: 1px solid rgba(212,175,95,.12);
+  background: #090c1a;
 }
 .footer-bottom-inner {
   display: flex;
