@@ -177,34 +177,6 @@ a:hover { color: var(--gold-light); }
 .options-btn svg { flex-shrink: 0; }
 .options-btn-label { white-space: nowrap; }
 
-/* ── Topbar suscribirse button ──────────────────────────────── */
-.topbar-subs-btn {
-  display: flex;
-  align-items: center;
-  gap: .45rem;
-  padding: .45rem 1rem;
-  background: linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 100%);
-  border-radius: 7px;
-  color: #0a0d1a;
-  font-family: var(--font-title);
-  font-size: .63rem;
-  letter-spacing: .13em;
-  text-transform: uppercase;
-  font-weight: 700;
-  text-decoration: none;
-  white-space: nowrap;
-  flex-shrink: 0;
-  transition: all .2s;
-  box-shadow: 0 2px 10px rgba(212,175,95,.2);
-}
-.topbar-subs-btn:hover {
-  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
-  color: #0a0d1a;
-  box-shadow: 0 4px 16px rgba(212,175,95,.3);
-  transform: translateY(-1px);
-}
-.topbar-subs-btn svg { flex-shrink: 0; }
-
 /* ── Options panel (derecha) ────────────────────────────────── */
 .opts-overlay {
   display: none;
@@ -512,6 +484,22 @@ a:hover { color: var(--gold-light); }
   border-color: var(--gold);
   color: #0a0d1a;
   font-weight: 700;
+}
+.cat-pill--subs {
+  background: linear-gradient(135deg, var(--gold-dim) 0%, var(--gold) 100%);
+  border-color: var(--gold);
+  color: #0a0d1a !important;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+  box-shadow: 0 2px 8px rgba(212,175,95,.22);
+}
+.cat-pill--subs:hover {
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+  color: #0a0d1a !important;
+  box-shadow: 0 3px 12px rgba(212,175,95,.35);
+  transform: translateY(-1px);
 }
 
 /* ── Slide-out menu panel ────────────────────────────────────── */
@@ -2173,8 +2161,7 @@ a:hover { color: var(--gold-light); }
   .logo-text { display: none; }
   .options-btn-label { display: none; }
   .options-btn { padding: .48rem .65rem; }
-  .topbar-subs-btn span { display: none; }
-  .topbar-subs-btn { padding: .45rem .6rem; }
+
   .songs-grid { grid-template-columns: 1fr; }
   .artist-thumb { width: 48px; height: 48px; }
 }
