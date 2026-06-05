@@ -39,25 +39,14 @@ const currentQ   = url.searchParams.get("q") ?? "";
     <header class="topbar">
       <div class="topbar-inner container">
 
+        <button class="mobile-menu-btn" aria-label="Menú" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+
         <a href="/" class="topbar-logo">
           <span class="logo-cross">✝</span>
           <span class="logo-text">Alabanzas</span>
         </a>
-
-        <nav class="topbar-nav" aria-label="Categorías">
-          <a href="/?cat=todas"
-            class="topbar-nav-link"
-            aria-current={currentCat === "todas" ? "page" : undefined}>
-            Todas
-          </a>
-          {categorias.map((c) => (
-            <a
-              href={`/?cat=${c.slug}`}
-              class="topbar-nav-link"
-              aria-current={currentCat === c.slug ? "page" : undefined}
-            >{c.nombre}</a>
-          ))}
-        </nav>
 
         <form class="topbar-search" action="/" method="get" role="search">
           {currentCat !== "todas" && <input type="hidden" name="cat" value={currentCat} />}
@@ -67,32 +56,37 @@ const currentQ   = url.searchParams.get("q") ?? "";
             type="search"
             name="q"
             value={currentQ}
-            placeholder="Buscar canciones…"
+            placeholder="¿Qué alabanza quieres encontrar?"
             autocomplete="off"
             aria-label="Buscar canciones"
           />
           <button class="topbar-search-btn" type="submit" aria-label="Buscar">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
             </svg>
           </button>
         </form>
 
-        <button class="mobile-menu-btn" aria-label="Menú" aria-expanded="false">
-          <span></span><span></span><span></span>
-        </button>
-
       </div>
 
+      <!-- ── CATEGORY PILLS BAR ─────────────────────────────── -->
+      <div class="cat-bar">
+        <div class="cat-bar-inner container">
+          <a href="/?cat=todas" class="cat-pill"
+            aria-current={currentCat === "todas" ? "page" : undefined}>Todas</a>
+          {categorias.map((c) => (
+            <a href={`/?cat=${c.slug}`} class="cat-pill"
+              aria-current={currentCat === c.slug ? "page" : undefined}>{c.nombre}</a>
+          ))}
+        </div>
+      </div>
+
+      <!-- ── MOBILE NAV ─────────────────────────────────────── -->
       <div class="mobile-nav" aria-hidden="true">
         <a href="/?cat=todas" class="mobile-nav-link">Todas</a>
         {categorias.map((c) => (
           <a href={`/?cat=${c.slug}`} class="mobile-nav-link">{c.nombre}</a>
         ))}
-        <form action="/" method="get" style="padding:.75rem 1rem 1rem;">
-          <input type="search" name="q" value={currentQ} placeholder="Buscar…"
-            style="width:100%;background:rgba(212,175,95,.07);border:1px solid rgba(212,175,95,.2);border-radius:2px;padding:.55rem .85rem;color:var(--text);font-size:.95rem;" />
-        </form>
       </div>
     </header>
 
