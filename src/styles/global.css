@@ -1145,107 +1145,208 @@ a:hover { color: var(--gold-light); }
 
 /* ── Light Theme ─────────────────────────────────────────────── */
 [data-theme="light"] {
-  --bg:           #f7f3ec;
-  --bg-card:      rgba(255, 252, 246, 0.97);
-  --text:         #1a1410;
-  --text-muted:   #5a4c30;
-  --text-faint:   #8a7a5a;
-  --border:       rgba(160,120,40,.2);
+  --bg:           #faf8f4;
+  --bg-card:      #ffffff;
+  --text:         #1c1408;
+  --text-muted:   #63502a;
+  --text-faint:   #9e865a;
+  --border:       rgba(160,120,40,.18);
   --border-hover: rgba(160,120,40,.45);
 }
 
-[data-theme="light"] body { background: #f7f3ec; }
+[data-theme="light"] body { background: #faf8f4; }
 
 [data-theme="light"] .bg-scene {
   background:
-    radial-gradient(ellipse 80% 55% at 50% -5%, #e6dcc8 0%, transparent 65%),
-    radial-gradient(ellipse 50% 40% at 85% 105%, #ddd4bc 0%, transparent 55%),
-    #f7f3ec;
+    radial-gradient(ellipse 90% 50% at 50% -10%, rgba(212,175,95,.18) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 45% at 90% 110%, rgba(212,175,95,.08) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 60% at -5% 60%, rgba(212,175,95,.05) 0%, transparent 50%),
+    #faf8f4;
 }
 
-[data-theme="light"] ::-webkit-scrollbar-track { background: #f7f3ec; }
-[data-theme="light"] ::-webkit-scrollbar-thumb { background: rgba(160,120,40,.3); }
+[data-theme="light"] ::-webkit-scrollbar-track { background: #f0ece3; }
+[data-theme="light"] ::-webkit-scrollbar-thumb { background: rgba(160,120,40,.28); }
 
+/* ── Header ── */
 [data-theme="light"] .topbar {
-  background: rgba(247,243,236,.97);
-  border-bottom-color: rgba(160,120,40,.18);
+  background: rgba(255,255,255,.98);
+  border-bottom-color: rgba(160,120,40,.12);
+  box-shadow: 0 1px 16px rgba(0,0,0,.07), 0 0 0 1px rgba(160,120,40,.05);
 }
 [data-theme="light"] .topbar-search {
-  background: rgba(0,0,0,.05);
-  border-color: rgba(160,120,40,.25);
-}
-[data-theme="light"] .topbar-search:focus-within {
-  background: rgba(0,0,0,.08);
-  border-color: var(--gold);
-}
-[data-theme="light"] .topbar-search-input::placeholder { color: rgba(90,76,48,.45); }
-[data-theme="light"] .topbar-search-btn { color: rgba(160,120,40,.6); }
-
-[data-theme="light"] .cat-bar {
-  background: rgba(235,228,214,.85);
-  border-top-color: rgba(160,120,40,.12);
-}
-[data-theme="light"] .cat-pill { border-color: rgba(160,120,40,.25); }
-
-[data-theme="light"] .menu-overlay { background: rgba(0,0,0,.4); }
-[data-theme="light"] .menu-panel {
-  background: #f0ebe0;
-  border-right-color: rgba(160,120,40,.15);
-}
-[data-theme="light"] .menu-panel-header { border-bottom-color: rgba(160,120,40,.12); }
-[data-theme="light"] .menu-panel-nav { border-bottom-color: rgba(160,120,40,.1); }
-[data-theme="light"] .menu-panel-cats { border-color: rgba(160,120,40,.08); }
-[data-theme="light"] .menu-panel-footer { border-top-color: rgba(160,120,40,.12); }
-[data-theme="light"] .menu-panel-link:hover { background: rgba(160,120,40,.08); }
-[data-theme="light"] .menu-close-btn { border-color: rgba(160,120,40,.2); }
-[data-theme="light"] .opts-panel {
-  background: #f0ebe0;
-  border-left-color: rgba(160,120,40,.15);
-}
-[data-theme="light"] .opts-header { border-bottom-color: rgba(160,120,40,.12); }
-[data-theme="light"] .opts-close-btn { border-color: rgba(160,120,40,.2); }
-[data-theme="light"] .opts-login-card {
-  background: rgba(160,120,40,.08);
-  border-color: rgba(160,120,40,.22);
-}
-[data-theme="light"] .opts-login-icon {
-  background: rgba(160,120,40,.1);
+  background: #f5f0e8;
   border-color: rgba(160,120,40,.28);
 }
-[data-theme="light"] .opts-section { border-top-color: rgba(160,120,40,.1); }
+[data-theme="light"] .topbar-search:focus-within {
+  background: #fffdf8;
+  border-color: #c9963a;
+  box-shadow: 0 0 0 3px rgba(201,150,58,.12);
+}
+[data-theme="light"] .topbar-search-input { color: #1c1408; }
+[data-theme="light"] .topbar-search-input::placeholder { color: #9e865a; }
+[data-theme="light"] .topbar-search-btn { color: #c9963a; }
+[data-theme="light"] .topbar-logo { color: #b8862a; }
+[data-theme="light"] .mobile-menu-btn,
+[data-theme="light"] .options-btn {
+  color: #63502a;
+  border-color: rgba(160,120,40,.22);
+}
+[data-theme="light"] .mobile-menu-btn:hover,
+[data-theme="light"] .options-btn:hover {
+  background: rgba(160,120,40,.07);
+  border-color: #c9963a;
+}
+
+/* ── Category bar ── */
+[data-theme="light"] .cat-bar {
+  background: #f0ece3;
+  border-top-color: rgba(160,120,40,.1);
+}
+[data-theme="light"] .cat-pill {
+  background: #ffffff;
+  border-color: rgba(160,120,40,.22);
+  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+}
+[data-theme="light"] .cat-pill:hover {
+  border-color: #c9963a;
+  background: #fffdf8;
+}
+[data-theme="light"] .cat-pill[aria-current="page"] {
+  background: #c9963a;
+  border-color: #c9963a;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(201,150,58,.35);
+}
+
+/* ── Song cards ── */
+[data-theme="light"] .song-card {
+  background: #ffffff;
+  border-color: rgba(160,120,40,.12);
+  box-shadow: 0 2px 10px rgba(0,0,0,.06), 0 0 0 1px rgba(160,120,40,.05);
+}
+[data-theme="light"] .song-card:hover {
+  border-color: rgba(201,150,58,.4);
+  box-shadow: 0 8px 32px rgba(0,0,0,.1), 0 0 0 1px rgba(201,150,58,.2);
+  transform: translateY(-2px);
+}
+[data-theme="light"] .card-badge {
+  background: rgba(201,150,58,.1);
+  color: #a07020;
+  border-color: rgba(201,150,58,.2);
+}
+[data-theme="light"] .card-title { color: #1c1408; }
+[data-theme="light"] .card-artist { color: #63502a; }
+[data-theme="light"] .card-preview { color: #9e865a; }
+[data-theme="light"] .card-tono {
+  background: rgba(160,120,40,.09);
+  color: #7a5e20;
+}
+
+/* ── Slide panels ── */
+[data-theme="light"] .menu-overlay { background: rgba(30,20,5,.35); }
+[data-theme="light"] .menu-panel {
+  background: #ffffff;
+  border-right-color: rgba(160,120,40,.12);
+  box-shadow: 4px 0 32px rgba(0,0,0,.12);
+}
+[data-theme="light"] .menu-panel-header { border-bottom-color: rgba(160,120,40,.1); }
+[data-theme="light"] .menu-panel-nav { border-bottom-color: rgba(160,120,40,.08); }
+[data-theme="light"] .menu-panel-cats { border-color: rgba(160,120,40,.07); }
+[data-theme="light"] .menu-panel-footer { border-top-color: rgba(160,120,40,.1); }
+[data-theme="light"] .menu-panel-link { color: #3a2e10; }
+[data-theme="light"] .menu-panel-link:hover { background: rgba(201,150,58,.07); color: #a07020; }
+[data-theme="light"] .menu-close-btn { border-color: rgba(160,120,40,.18); color: #63502a; }
+[data-theme="light"] .menu-panel-cats-title { color: #9e865a; border-bottom-color: rgba(160,120,40,.1); }
+[data-theme="light"] .menu-panel-cat-link { color: #4a3c18; border-bottom-color: rgba(160,120,40,.05); }
+
+[data-theme="light"] .opts-panel {
+  background: #ffffff;
+  border-left-color: rgba(160,120,40,.12);
+  box-shadow: -4px 0 32px rgba(0,0,0,.12);
+}
+[data-theme="light"] .opts-header { border-bottom-color: rgba(160,120,40,.1); }
+[data-theme="light"] .opts-close-btn { border-color: rgba(160,120,40,.18); color: #63502a; }
+[data-theme="light"] .opts-login-card {
+  background: linear-gradient(135deg, #fffbf2 0%, #fff8e8 100%);
+  border-color: rgba(201,150,58,.25);
+  box-shadow: 0 2px 12px rgba(201,150,58,.1);
+}
+[data-theme="light"] .opts-login-icon {
+  background: rgba(201,150,58,.1);
+  border-color: rgba(201,150,58,.3);
+}
+[data-theme="light"] .opts-section { border-top-color: rgba(160,120,40,.08); }
+[data-theme="light"] .footer-pantalla-opt--active {
+  background: rgba(201,150,58,.12);
+  border-color: rgba(201,150,58,.4);
+  color: #a07020;
+}
+
+/* ── Song detail page ── */
+[data-theme="light"] .artist-thumb {
+  background: linear-gradient(135deg, #fff8e8 0%, #fdf0cc 100%);
+  border-color: rgba(201,150,58,.35);
+  box-shadow: 0 2px 12px rgba(201,150,58,.2);
+}
+[data-theme="light"] .action-icon {
+  border-color: rgba(160,120,40,.18);
+  color: #63502a;
+  background: #ffffff;
+  box-shadow: 0 1px 5px rgba(0,0,0,.07);
+}
+[data-theme="light"] .action-icon:hover { border-color: #c9963a; background: #fffdf8; }
+[data-theme="light"] .song-tab {
+  border-color: rgba(160,120,40,.2);
+  background: #ffffff;
+  color: #63502a;
+  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+}
+[data-theme="light"] .song-tab--active {
+  background: #c9963a;
+  border-color: #c9963a;
+  color: #ffffff;
+}
+[data-theme="light"] .lyrics-block { color: #2a2010; }
+[data-theme="light"] .back-link { color: #a07020; }
+[data-theme="light"] .back-link:hover { color: #c9963a; }
+
+/* ── Footer ── */
+[data-theme="light"] .site-footer {
+  background: #f0ece2;
+  border-top-color: rgba(160,120,40,.16);
+}
+[data-theme="light"] .footer-card {
+  background: #ffffff;
+  border-color: rgba(160,120,40,.12);
+  box-shadow: 0 2px 14px rgba(0,0,0,.06), 0 0 0 1px rgba(160,120,40,.05);
+}
+[data-theme="light"] .footer-card:hover {
+  box-shadow: 0 6px 24px rgba(0,0,0,.09), 0 0 0 1px rgba(201,150,58,.18);
+}
 [data-theme="light"] .footer-info { border-top-color: rgba(160,120,40,.1); }
 [data-theme="light"] .footer-social { border-top-color: rgba(160,120,40,.1); }
 [data-theme="light"] .footer-social-pill {
-  background: rgba(240,235,225,.9);
-  border-color: rgba(160,120,40,.14);
+  background: #ffffff;
+  border-color: rgba(160,120,40,.18);
+  box-shadow: 0 1px 5px rgba(0,0,0,.06);
 }
-[data-theme="light"] .footer-pantalla-opt--active {
-  background: rgba(160,120,40,.12);
-  border-color: rgba(160,120,40,.32);
-}
-[data-theme="light"] .menu-panel-cats-title { border-bottom-color: rgba(160,120,40,.12); }
-[data-theme="light"] .menu-panel-cat-link { border-bottom-color: rgba(160,120,40,.06); }
-
-[data-theme="light"] .site-footer {
-  background: rgba(232,225,210,.8);
-  border-top-color: rgba(160,120,40,.14);
-}
-[data-theme="light"] .footer-card {
-  background: rgba(255,252,245,.92);
-  border-color: rgba(160,120,40,.12);
-}
+[data-theme="light"] .footer-social-pill:hover { border-color: #c9963a; background: #fffdf8; }
 [data-theme="light"] .footer-bottom {
-  background: rgba(220,213,198,.7);
-  border-top-color: rgba(160,120,40,.1);
+  background: #e6e0d2;
+  border-top-color: rgba(160,120,40,.12);
 }
 
-[data-theme="light"] .artist-thumb {
-  background: rgba(160,120,40,.08);
-  border-color: rgba(160,120,40,.28);
-}
-[data-theme="light"] .action-icon { border-color: rgba(160,120,40,.2); }
-[data-theme="light"] .song-tab { border-color: rgba(160,120,40,.22); }
-[data-theme="light"] .theme-btn { border-color: rgba(160,120,40,.2); }
+/* ── Theme switcher ── */
+[data-theme="light"] .theme-btn { border-color: rgba(160,120,40,.2); color: #63502a; }
+[data-theme="light"] .theme-btn:hover { border-color: #c9963a; background: rgba(201,150,58,.07); }
+[data-theme="light"] .theme-btn--active { background: rgba(201,150,58,.12); border-color: rgba(201,150,58,.45); }
+
+/* ── Hero ── */
+[data-theme="light"] .site-header .eyebrow { color: #c9963a; }
+[data-theme="light"] .site-header h1 { color: #1c1408; }
+[data-theme="light"] .site-header .tagline { color: #7a6040; }
+[data-theme="light"] .gold-rule { background: linear-gradient(90deg, transparent, #c9963a, transparent); }
+[data-theme="light"] .result-count { color: #9e865a; }
 
 /* ── Animations ─────────────────────────────────────────────── */
 @keyframes fadeDown {
