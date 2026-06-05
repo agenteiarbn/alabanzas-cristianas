@@ -24,7 +24,7 @@ function rtfEsc(text: string): string {
     if (ch === "\\") { out += "\\\\"; continue; }
     if (ch === "{")  { out += "\\{";  continue; }
     if (ch === "}")  { out += "\\}";  continue; }
-    if (ch === "\n") { out += "\\line\n"; continue; }
+    if (ch === "\n") { out += "\\\n"; continue; }
     const code = ch.charCodeAt(0);
     // Latin-1 supplement (0x80–0xFF) → \'XX (Windows-1252 hex)
     if (code >= 0x80 && code <= 0xff) {
@@ -41,16 +41,16 @@ function rtfEsc(text: string): string {
   return out;
 }
 
-// Build a white-text, centered RTF block.
-// \fs96 = 48 pt (RTF uses half-points). White = \cf1.
+// Build a white-text, centered RTF block matching ProPresenter 7's native format.
+// \fs96 = 48pt (RTF half-points). Two white entries in colortbl; text uses \cf2.
 function makeRTF(text: string): string {
   const body = rtfEsc(text.trim());
   return (
     "{\\rtf1\\ansi\\ansicpg1252" +
-    "{\\fonttbl{\\f0\\fswiss\\fcharset0 Arial;}}" +
-    "{\\colortbl;\\red255\\green255\\blue255;}" +
-    "\\pard\\qc\\pardirnatural" +
-    "\\f0\\fs96\\cf1 " +
+    "{\\fonttbl{\\f0\\fnil\\fcharset0 Arial;}}" +
+    "{\\colortbl;\\red255\\green255\\blue255;\\red255\\green255\\blue255;}" +
+    "\\pard\\sl288\\slmult1\\pardirnatural\\qc\\partightenfactor0\n\n" +
+    "\\f0\\b\\fs96\\cf2 " +
     body +
     "}"
   );
@@ -100,7 +100,7 @@ export function generatePro6(
         <RVDisplaySlide backgroundColor="0 0 0 1" enabled="1" highlightColor="" hotKey="" label="" notes="" slideType="1" sort_index="0" UUID="${sId}" drawingBackgroundColor="0" chordChartPath="" serialization-array-index="0">
           <array rvXMLIvarName="cues"/>
           <array rvXMLIvarName="displayElements">
-            <RVTextElement displayDelay="0" displayName="Default" UUID="${eId}" typeID="0" fromTemplate="0" bezelRadius="0" drawingFill="0" drawingShadow="0" drawingStroke="0" fillColor="0 0 0 0" rotation="0" source="" adjustsHeightToFit="0" verticalAlignment="1" RTFData="${rtfB64}" revealType="0" serialization-array-index="0">
+            <RVTextElement displayDelay="0" displayName="Default" UUID="${eId}" typeID="0" fromTemplate="0" bezelRadius="0" drawingFill="1" drawingShadow="0" drawingStroke="0" fillColor="0 0 0 1" rotation="0" source="" adjustsHeightToFit="0" verticalAlignment="1" RTFData="${rtfB64}" revealType="0" serialization-array-index="0">
               <_-RVRect3D-_-position>0 0 0 ${W} ${H}</_-RVRect3D-_-position>
             </RVTextElement>
           </array>
