@@ -52,7 +52,7 @@ export async function getCanciones(page = 1, catSlug = ""): Promise<{ data: Canc
     .select(`
       id, titulo, slug, anio, tono, letra, youtube_url,
       artistas (id, nombre, slug, pais),
-      categorias (id, nombre, slug, color)
+      categorias!inner (id, nombre, slug, color)
     `, { count: "exact" })
     .eq("publicada", true)
     .order("titulo", { ascending: true })
