@@ -1,5 +1,5 @@
 // Generates a ProPresenter 6 (.pro6) XML file from song lyrics.
-// Pro6 is XML-based and importable by both ProPresenter 6 and 7.
+// .pro6 is XML-based and importable by ProPresenter 6 and 7.
 
 function uuid(): string {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
@@ -16,41 +16,47 @@ function xmlEsc(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
-// Escape text for RTF: handle special chars + encode non-ASCII as \uN?
+// Encode text for RTF using Windows-1252 \'XX for Spanish/Latin chars.
+// Result is pure ASCII so btoa() handles it cleanly.
 function rtfEsc(text: string): string {
   let out = "";
   for (const ch of text) {
     if (ch === "\\") { out += "\\\\"; continue; }
     if (ch === "{")  { out += "\\{";  continue; }
     if (ch === "}")  { out += "\\}";  continue; }
-    if (ch === "\n") { out += "\\line "; continue; }
+    if (ch === "\n") { out += "\\line\n"; continue; }
     const code = ch.charCodeAt(0);
-    if (code > 127) { out += `\\u${code}?`; continue; }
+    // Latin-1 supplement (0x80–0xFF) → \'XX (Windows-1252 hex)
+    if (code >= 0x80 && code <= 0xff) {
+      out += "\\'" + code.toString(16).padStart(2, "0");
+      continue;
+    }
+    // Anything else outside ASCII → unicode escape
+    if (code > 0xff) {
+      out += `\\u${code}?`;
+      continue;
+    }
     out += ch;
   }
   return out;
 }
 
-// Build RTF string for a block of text (white, centered, Arial 64pt)
+// Build a white-text, centered RTF block.
+// \fs96 = 48 pt (RTF uses half-points). White = \cf1.
 function makeRTF(text: string): string {
   const body = rtfEsc(text.trim());
-  // \fs128 = 64pt (RTF uses half-points)
   return (
-    "{\\rtf1\\ansi\\deff0" +
-    "{\\fonttbl{\\f0 Arial;}}" +
+    "{\\rtf1\\ansi\\ansicpg1252" +
+    "{\\fonttbl{\\f0\\fswiss\\fcharset0 Arial;}}" +
     "{\\colortbl;\\red255\\green255\\blue255;}" +
-    "\\pard\\qc\\f0\\fs128\\cf1 " +
+    "\\pard\\qc\\pardirnatural" +
+    "\\f0\\fs96\\cf1 " +
     body +
     "}"
   );
 }
 
-function base64(str: string): string {
-  // str must be ASCII-safe (rtfEsc guarantees that)
-  return btoa(str);
-}
-
-// Split lyrics into named sections based on blank lines
+// Split lyrics into named slide groups on blank lines.
 function parseSections(lyrics: string): { name: string; text: string }[] {
   const blocks = lyrics
     .split(/\n[ \t]*\n/)
@@ -83,7 +89,8 @@ export function generatePro6(
 
   const groups = sections
     .map((sec, idx) => {
-      const rtfB64 = base64(makeRTF(sec.text));
+      const rtf    = makeRTF(sec.text);
+      const rtfB64 = btoa(rtf);
       const gId = uuid();
       const sId = uuid();
       const eId = uuid();
@@ -93,7 +100,7 @@ export function generatePro6(
         <RVDisplaySlide backgroundColor="0 0 0 1" enabled="1" highlightColor="" hotKey="" label="" notes="" slideType="1" sort_index="0" UUID="${sId}" drawingBackgroundColor="0" chordChartPath="" serialization-array-index="0">
           <array rvXMLIvarName="cues"/>
           <array rvXMLIvarName="displayElements">
-            <RVTextElement displayDelay="0" displayName="Default" UUID="${eId}" typeID="0" fromTemplate="0" bezelRadius="0" drawingFill="0" drawingShadow="1" drawingStroke="0" fillColor="1 1 1 0" rotation="0" source="" adjustsHeightToFit="1" verticalAlignment="1" RTFData="${rtfB64}" revealType="0" serialization-array-index="0">
+            <RVTextElement displayDelay="0" displayName="Default" UUID="${eId}" typeID="0" fromTemplate="0" bezelRadius="0" drawingFill="0" drawingShadow="0" drawingStroke="0" fillColor="0 0 0 0" rotation="0" source="" adjustsHeightToFit="0" verticalAlignment="1" RTFData="${rtfB64}" revealType="0" serialization-array-index="0">
               <_-RVRect3D-_-position>0 0 0 ${W} ${H}</_-RVRect3D-_-position>
             </RVTextElement>
           </array>
@@ -104,29 +111,7 @@ export function generatePro6(
     .join("\n");
 
   return `<?xml version="1.0" encoding="UTF-8"?>
-<RVPresentationDocument
-  CCLIArtistCredits="${xmlEsc(artist)}"
-  CCLICopyrightYear=""
-  CCLIDisplay="0"
-  CCLILicenseNumber=""
-  CCLIPublisher=""
-  CCLISongTitle="${xmlEsc(title)}"
-  category="Song"
-  chordChartPath=""
-  docType="0"
-  drawingBackgroundColor="0"
-  height="${H}"
-  lastDateUsed="${new Date().toISOString()}"
-  loopSlides="0"
-  notes=""
-  primaryTargetScreen="0"
-  selectedArrangement=""
-  usedCount="0"
-  uuid="${docId}"
-  versionNumber="600"
-  width="${W}"
-  xmlns:RVPresentationDocument="http://www.renewedvision.com/"
->
+<RVPresentationDocument CCLIArtistCredits="${xmlEsc(artist)}" CCLICopyrightYear="" CCLIDisplay="0" CCLILicenseNumber="" CCLIPublisher="" CCLISongTitle="${xmlEsc(title)}" category="Song" chordChartPath="" docType="0" drawingBackgroundColor="0" height="${H}" lastDateUsed="${new Date().toISOString()}" loopSlides="0" notes="" primaryTargetScreen="0" selectedArrangement="" usedCount="0" uuid="${docId}" versionNumber="600" width="${W}" xmlns:RVPresentationDocument="http://www.renewedvision.com/">
   <RVTimeline OS="0" duration="0" loop="0" playBackRate="1" selectedMediaTrackIndex="0" timeStamp="0">
     <array rvXMLIvarName="timeCues"/>
     <array rvXMLIvarName="mediaTracks"/>
