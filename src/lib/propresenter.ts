@@ -100,7 +100,7 @@ export function generatePro6(
         <RVDisplaySlide backgroundColor="0 0 0 1" enabled="1" highlightColor="" hotKey="" label="" notes="" slideType="1" sort_index="0" UUID="${sId}" drawingBackgroundColor="0" chordChartPath="" serialization-array-index="0">
           <array rvXMLIvarName="cues"/>
           <array rvXMLIvarName="displayElements">
-            <RVTextElement displayDelay="0" displayName="Default" UUID="${eId}" typeID="0" fromTemplate="0" bezelRadius="0" drawingFill="1" drawingShadow="0" drawingStroke="0" fillColor="0 0 0 1" rotation="0" source="" adjustsHeightToFit="0" verticalAlignment="1" RTFData="${rtfB64}" revealType="0" serialization-array-index="0">
+            <RVTextElement displayDelay="0" displayName="Default" UUID="${eId}" typeID="0" fromTemplate="0" bezelRadius="0" drawingFill="0" drawingShadow="0" drawingStroke="0" fillColor="0 0 0 0" rotation="0" source="" adjustsHeightToFit="0" verticalAlignment="1" RTFData="${rtfB64}" revealType="0" serialization-array-index="0">
               <_-RVRect3D-_-position>0 0 0 ${W} ${H}</_-RVRect3D-_-position>
             </RVTextElement>
           </array>
