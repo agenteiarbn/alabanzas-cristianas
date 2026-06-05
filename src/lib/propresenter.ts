@@ -1,5 +1,5 @@
 // Generates a ProPresenter 6 (.pro6) XML file from song lyrics.
-// .pro6 is XML-based and importable by ProPresenter 6 and 7.
+// .pro6 is importable by ProPresenter 6 and 7 (File > Import > ProPresenter 6 Document).
 
 function uuid(): string {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
@@ -16,8 +16,23 @@ function xmlEsc(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
-// Encode text for RTF using Windows-1252 \'XX for Spanish/Latin chars.
-// Result is pure ASCII so btoa() handles it cleanly.
+// XML escape including non-ASCII as numeric references (keeps output pure ASCII).
+function xmlEscFull(s: string): string {
+  let r = "";
+  for (const ch of s) {
+    const code = ch.charCodeAt(0);
+    if (ch === "&") { r += "&amp;"; continue; }
+    if (ch === "<") { r += "&lt;";  continue; }
+    if (ch === ">") { r += "&gt;";  continue; }
+    if (ch === '"') { r += "&quot;"; continue; }
+    if (code > 127) { r += `&#x${code.toString(16)};`; continue; }
+    r += ch;
+  }
+  return r;
+}
+
+// ── RTF (Mac / cross-platform) ──────────────────────────────────────────────
+
 function rtfEsc(text: string): string {
   let out = "";
   for (const ch of text) {
@@ -26,23 +41,16 @@ function rtfEsc(text: string): string {
     if (ch === "}")  { out += "\\}";  continue; }
     if (ch === "\n") { out += "\\\n"; continue; }
     const code = ch.charCodeAt(0);
-    // Latin-1 supplement (0x80–0xFF) → \'XX (Windows-1252 hex)
     if (code >= 0x80 && code <= 0xff) {
       out += "\\'" + code.toString(16).padStart(2, "0");
       continue;
     }
-    // Anything else outside ASCII → unicode escape
-    if (code > 0xff) {
-      out += `\\u${code}?`;
-      continue;
-    }
+    if (code > 0xff) { out += `\\u${code}?`; continue; }
     out += ch;
   }
   return out;
 }
 
-// Build a white-text, centered RTF block matching ProPresenter 7's native format.
-// \fs96 = 48pt (RTF half-points). Two white entries in colortbl; text uses \cf2.
 function makeRTF(text: string): string {
   const body = rtfEsc(text.trim());
   return (
@@ -56,7 +64,29 @@ function makeRTF(text: string): string {
   );
 }
 
-// Split lyrics into named slide groups on blank lines.
+// ── WinFlowData (Windows XAML FlowDocument, UTF-16 LE) ──────────────────────
+// PP7 on Windows reads WinFlowData instead of RTFData.
+
+function makeWinFlow(text: string): string {
+  const escaped = text.trim().split("\n").map(xmlEscFull).join("<LineBreak/>");
+
+  const xaml =
+    `<FlowDocument xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"` +
+    ` FontFamily="Arial" FontSize="80" TextAlignment="Center">` +
+    `<Paragraph><Run Foreground="#FFFFFFFF" FontWeight="Bold">${escaped}</Run></Paragraph>` +
+    `</FlowDocument>`;
+
+  // Encode as UTF-16 LE with BOM so PP7 parses it correctly.
+  let bytes = "\xFF\xFE";
+  for (let i = 0; i < xaml.length; i++) {
+    const c = xaml.charCodeAt(i);
+    bytes += String.fromCharCode(c & 0xff, (c >> 8) & 0xff);
+  }
+  return btoa(bytes);
+}
+
+// ── Section parser ───────────────────────────────────────────────────────────
+
 function parseSections(lyrics: string): { name: string; text: string }[] {
   const blocks = lyrics
     .split(/\n[ \t]*\n/)
@@ -77,6 +107,8 @@ function parseSections(lyrics: string): { name: string; text: string }[] {
   });
 }
 
+// ── Main export ──────────────────────────────────────────────────────────────
+
 export function generatePro6(
   title: string,
   artist: string,
@@ -89,8 +121,8 @@ export function generatePro6(
 
   const groups = sections
     .map((sec, idx) => {
-      const rtf    = makeRTF(sec.text);
-      const rtfB64 = btoa(rtf);
+      const rtfB64     = btoa(makeRTF(sec.text));
+      const winFlowB64 = makeWinFlow(sec.text);
       const gId = uuid();
       const sId = uuid();
       const eId = uuid();
@@ -100,7 +132,7 @@ export function generatePro6(
         <RVDisplaySlide backgroundColor="0 0 0 1" enabled="1" highlightColor="" hotKey="" label="" notes="" slideType="1" sort_index="0" UUID="${sId}" drawingBackgroundColor="0" chordChartPath="" serialization-array-index="0">
           <array rvXMLIvarName="cues"/>
           <array rvXMLIvarName="displayElements">
-            <RVTextElement displayDelay="0" displayName="Default" UUID="${eId}" typeID="0" fromTemplate="0" bezelRadius="0" drawingFill="0" drawingShadow="0" drawingStroke="0" fillColor="0 0 0 0" rotation="0" source="" adjustsHeightToFit="0" verticalAlignment="1" RTFData="${rtfB64}" revealType="0" serialization-array-index="0">
+            <RVTextElement displayDelay="0" displayName="Default" UUID="${eId}" typeID="0" fromTemplate="0" bezelRadius="0" drawingFill="0" drawingShadow="0" drawingStroke="0" fillColor="0 0 0 0" rotation="0" source="" adjustsHeightToFit="0" verticalAlignment="1" RTFData="${rtfB64}" WinFlowData="${winFlowB64}" revealType="0" serialization-array-index="0">
               <_-RVRect3D-_-position>0 0 0 ${W} ${H}</_-RVRect3D-_-position>
             </RVTextElement>
           </array>
